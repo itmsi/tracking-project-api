@@ -4,10 +4,10 @@ const router = express.Router()
 const taskHandler = require('./handler')
 const { validateRequest } = require('../../middlewares/validation')
 const { taskValidation } = require('./validation')
-const { authenticateToken } = require('../../middlewares/token')
+const { verifyToken } = require('../../middlewares/token')
 
 // All routes require authentication
-router.use(authenticateToken)
+router.use(verifyToken)
 
 // Task CRUD routes
 router.get('/', 

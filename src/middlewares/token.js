@@ -92,31 +92,9 @@ const verifyTokenAuction = async (req, res, next) => {
   }
 }
 
-// JWT Authentication middleware for project tracker
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization']
-  const token = authHeader && authHeader.split(' ')[1]
-
-  if (!token) {
-    return response.error(res, 401, 'Token tidak ditemukan')
-  }
-
-  const JWT_SECRET = process.env.JWT_SECRET || 'project-tracker-secret-key-2024'
-  
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) {
-      return response.error(res, 403, 'Token tidak valid')
-    }
-    
-    req.user = user
-    next()
-  })
-}
-
 module.exports = {
   verifyToken,
   verifyTokenCustomer,
   verifyTokenClient,
-  verifyTokenAuction,
-  authenticateToken
+  verifyTokenAuction
 }

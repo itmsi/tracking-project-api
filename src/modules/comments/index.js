@@ -4,10 +4,10 @@ const router = express.Router()
 const commentHandler = require('./handler')
 const { validateRequest } = require('../../middlewares/validation')
 const { commentValidation } = require('./validation')
-const { authenticateToken } = require('../../middlewares/token')
+const { verifyToken } = require('../../middlewares/token')
 
 // All routes require authentication
-router.use(authenticateToken)
+router.use(verifyToken)
 
 // Comment CRUD routes
 router.get('/task/:taskId', 

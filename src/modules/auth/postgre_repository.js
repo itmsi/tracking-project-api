@@ -2,25 +2,6 @@ const { pgCore } = require('../../config/database')
 const bcrypt = require('bcrypt')
 
 class AuthRepository {
-  async createUser(userData) {
-    const { email, password, first_name, last_name, role = 'user' } = userData
-    
-    // Hash password
-    const saltRounds = 12
-    const hashedPassword = await bcrypt.hash(password, saltRounds)
-    
-    const [user] = await pgCore('users')
-      .insert({
-        email,
-        password: hashedPassword,
-        first_name,
-        last_name,
-        role
-      })
-      .returning(['id', 'email', 'first_name', 'last_name', 'role', 'avatar_url', 'is_active', 'created_at', 'updated_at'])
-    
-    return user
-  }
 
   async findUserByEmail(email) {
     const user = await pgCore('users')
@@ -38,6 +19,48 @@ class AuthRepository {
     return user
   }
 
+  async createUser(userData) {
+    const { email, password, first_name, last_name, role = 'user' } = userData
+    
+    // Hash password
+    const saltRounds = 10
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
+    
+    const [user] = await pgCore('users')
+      .insert({
+        email,
+        password: hashedPassword,
+        first_name,
+        last_name,
+        role,
+        is_active: true
+      })
+      .returning(['id', 'email', 'first_name', 'last_name', 'role', 'is_active', 'created_at'])
+    
+    return user
+  }
+
+  async verifyPassword(email, password) {
+    const user = await this.findUserByEmail(email)
+    if (!user) {
+      return null
+    }
+    
+    const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) {
+      return null
+    }
+    
+    // Update last login
+    await pgCore('users')
+      .where({ id: user.id })
+      .update({ last_login: new Date() })
+    
+    // Return user without password
+    const { password: _, ...userWithoutPassword } = user
+    return userWithoutPassword
+  }
+
   async updateUser(id, updateData) {
     const [user] = await pgCore('users')
       .where({ id })
@@ -47,45 +70,6 @@ class AuthRepository {
     return user
   }
 
-  async updatePassword(id, newPassword) {
-    const saltRounds = 12
-    const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
-    
-    await pgCore('users')
-      .where({ id })
-      .update({ 
-        password: hashedPassword,
-        updated_at: new Date()
-      })
-    
-    return true
-  }
-
-  async updateLastLogin(id) {
-    await pgCore('users')
-      .where({ id })
-      .update({ 
-        last_login: new Date(),
-        updated_at: new Date()
-      })
-    
-    return true
-  }
-
-  async verifyPassword(plainPassword, hashedPassword) {
-    return await bcrypt.compare(plainPassword, hashedPassword)
-  }
-
-  async checkEmailExists(email, excludeId = null) {
-    let query = pgCore('users').where({ email, is_active: true })
-    
-    if (excludeId) {
-      query = query.whereNot('id', excludeId)
-    }
-    
-    const user = await query.first()
-    return !!user
-  }
 
   async getUsersList(filters = {}) {
     const { page = 1, limit = 10, search, role } = filters

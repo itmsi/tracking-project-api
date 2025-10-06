@@ -1,11 +1,11 @@
 /**
- * Standard response utilities for SSO API
+ * Standard response utilities for API
  */
 
 /**
  * Success response
  */
-const successResponse = (res, data = null, message = 'Success', statusCode = 200) => {
+const success = (res, statusCode = 200, message = 'Success', data = null) => {
   return res.status(statusCode).json({
     success: true,
     message,
@@ -17,7 +17,7 @@ const successResponse = (res, data = null, message = 'Success', statusCode = 200
 /**
  * Error response
  */
-const errorResponse = (res, message = 'Error', statusCode = 500, errors = null) => {
+const error = (res, statusCode = 500, message = 'Error', errors = null) => {
   return res.status(statusCode).json({
     success: false,
     message,
@@ -29,7 +29,7 @@ const errorResponse = (res, message = 'Error', statusCode = 500, errors = null) 
 /**
  * Validation error response
  */
-const validationErrorResponse = (res, errors) => {
+const validationError = (res, errors) => {
   return res.status(400).json({
     success: false,
     message: 'Validation failed',
@@ -41,7 +41,7 @@ const validationErrorResponse = (res, errors) => {
 /**
  * Not found response
  */
-const notFoundResponse = (res, message = 'Resource not found') => {
+const notFound = (res, message = 'Resource not found') => {
   return res.status(404).json({
     success: false,
     message,
@@ -52,7 +52,7 @@ const notFoundResponse = (res, message = 'Resource not found') => {
 /**
  * Unauthorized response
  */
-const unauthorizedResponse = (res, message = 'Unauthorized') => {
+const unauthorized = (res, message = 'Unauthorized') => {
   return res.status(401).json({
     success: false,
     message,
@@ -63,7 +63,7 @@ const unauthorizedResponse = (res, message = 'Unauthorized') => {
 /**
  * Forbidden response
  */
-const forbiddenResponse = (res, message = 'Forbidden') => {
+const forbidden = (res, message = 'Forbidden') => {
   return res.status(403).json({
     success: false,
     message,
@@ -72,10 +72,10 @@ const forbiddenResponse = (res, message = 'Forbidden') => {
 }
 
 module.exports = {
-  successResponse,
-  errorResponse,
-  validationErrorResponse,
-  notFoundResponse,
-  unauthorizedResponse,
-  forbiddenResponse
+  success,
+  error,
+  validationError,
+  notFound,
+  unauthorized,
+  forbidden
 }

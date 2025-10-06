@@ -4,10 +4,10 @@ const router = express.Router()
 const userHandler = require('./handler')
 const { validateRequest } = require('../../middlewares/validation')
 const { userValidation } = require('./validation')
-const { authenticateToken } = require('../../middlewares/token')
+const { verifyToken } = require('../../middlewares/token')
 
 // All routes require authentication
-router.use(authenticateToken)
+router.use(verifyToken)
 
 // User management routes (admin only)
 router.get('/', 

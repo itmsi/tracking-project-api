@@ -4,45 +4,29 @@ const router = express.Router()
 const authHandler = require('./handler')
 const { validateRequest } = require('../../middlewares/validation')
 const { authValidation } = require('./validation')
-const { authenticateToken } = require('../../middlewares/token')
+const { verifyToken } = require('../../middlewares/token')
 
-// Public routes
-router.post('/register', 
-  validateRequest(authValidation.register), 
-  authHandler.register
-)
-
+// Public routes - tidak memerlukan authentication
 router.post('/login', 
   validateRequest(authValidation.login), 
   authHandler.login
 )
 
-router.post('/refresh-token', 
-  validateRequest(authValidation.refreshToken), 
-  authHandler.refreshToken
+router.post('/register', 
+  validateRequest(authValidation.register), 
+  authHandler.register
 )
 
-// Protected routes
+// Protected routes - memerlukan authentication
 router.get('/me', 
-  authenticateToken, 
+  verifyToken, 
   authHandler.getProfile
 )
 
 router.put('/profile', 
-  authenticateToken, 
+  verifyToken, 
   validateRequest(authValidation.updateProfile), 
   authHandler.updateProfile
-)
-
-router.put('/change-password', 
-  authenticateToken, 
-  validateRequest(authValidation.changePassword), 
-  authHandler.changePassword
-)
-
-router.post('/logout', 
-  authenticateToken, 
-  authHandler.logout
 )
 
 module.exports = router

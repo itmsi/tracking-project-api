@@ -14,6 +14,7 @@ const pdf = require('./pdf')
 const publish = require('./publish')
 const excel = require('./excel')
 const standardQuery = require('./standard_query')
+const response = require('./response')
 
 module.exports = {
   ...constant,
@@ -31,5 +32,6 @@ module.exports = {
   ...pdf,
   ...publish,
   ...excel,
-  ...standardQuery
+  ...standardQuery,
+  response
 }
