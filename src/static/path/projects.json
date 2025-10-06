@@ -1,0 +1,824 @@
+{
+  "/projects": {
+    "get": {
+      "tags": ["Projects"],
+      "summary": "Get projects list",
+      "description": "Get a paginated list of projects with optional filtering",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "page",
+          "in": "query",
+          "description": "Page number",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 1
+          }
+        },
+        {
+          "name": "limit",
+          "in": "query",
+          "description": "Number of items per page",
+          "required": false,
+          "schema": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100,
+            "default": 10
+          }
+        },
+        {
+          "name": "search",
+          "in": "query",
+          "description": "Search term for project name or description",
+          "required": false,
+          "schema": {
+            "type": "string"
+          }
+        },
+        {
+          "name": "status",
+          "in": "query",
+          "description": "Filter by project status",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "enum": ["active", "on_hold", "completed", "cancelled"]
+          }
+        },
+        {
+          "name": "team_id",
+          "in": "query",
+          "description": "Filter by team ID",
+          "required": false,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Projects retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/PaginatedResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "projects": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/Project"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": ["Projects"],
+      "summary": "Create new project",
+      "description": "Create a new project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/CreateProjectRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Project created successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/Project"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - validation error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/projects/{id}": {
+    "get": {
+      "tags": ["Projects"],
+      "summary": "Get project detail",
+      "description": "Get detailed information about a specific project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Project retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/Project"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": ["Projects"],
+      "summary": "Update project",
+      "description": "Update an existing project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UpdateProjectRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Project updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/Project"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - validation error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden - insufficient permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "tags": ["Projects"],
+      "summary": "Delete project",
+      "description": "Delete an existing project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Project deleted successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden - insufficient permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/projects/{id}/members": {
+    "get": {
+      "tags": ["Projects"],
+      "summary": "Get project members",
+      "description": "Get all members of a specific project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Project members retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "type": "object",
+                        "properties": {
+                          "members": {
+                            "type": "array",
+                            "items": {
+                              "$ref": "#/components/schemas/ProjectMember"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "post": {
+      "tags": ["Projects"],
+      "summary": "Add project member",
+      "description": "Add a new member to a project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AddProjectMemberRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "Member added successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/ProjectMember"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - validation error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden - insufficient permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/projects/{id}/members/{userId}": {
+    "put": {
+      "tags": ["Projects"],
+      "summary": "Update project member role",
+      "description": "Update the role of a project member",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "userId",
+          "in": "path",
+          "description": "User ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/UpdateProjectMemberRequest"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Member role updated successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/ProjectMember"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Bad request - validation error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden - insufficient permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project or member not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "tags": ["Projects"],
+      "summary": "Remove project member",
+      "description": "Remove a member from a project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        {
+          "name": "userId",
+          "in": "path",
+          "description": "User ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Member removed successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "403": {
+          "description": "Forbidden - insufficient permissions",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project or member not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/projects/{id}/stats": {
+    "get": {
+      "tags": ["Projects"],
+      "summary": "Get project statistics",
+      "description": "Get statistics for a specific project",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "Project ID",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Project statistics retrieved successfully",
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/ApiResponse"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "data": {
+                        "$ref": "#/components/schemas/ProjectStats"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "Unauthorized - invalid token",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Project not found",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApiErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

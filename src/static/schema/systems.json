@@ -1,0 +1,310 @@
+{
+  "SchemaPostSystemGet": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Nomor halaman untuk pagination",
+        "example": 1
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 100,
+        "description": "Jumlah data per halaman (1-100)",
+        "example": 10
+      },
+      "search": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 100,
+        "description": "Kata kunci pencarian sistem",
+        "example": "HR"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Parameter untuk mendapatkan daftar sistem dengan pagination dan search"
+  },
+  "SchemaPostSystemCreate": {
+    "type": "object",
+    "required": ["system_name"],
+    "properties": {
+      "system_name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 100,
+        "description": "Nama sistem (3-100 karakter)",
+        "example": "Human Resources Management System"
+      },
+      "system_url": {
+        "type": "string",
+        "maxLength": 255,
+        "description": "URL sistem (opsional, maksimal 255 karakter)",
+        "example": "https://hr.company.com"
+      },
+      "system_icon": {
+        "type": "string",
+        "maxLength": 150,
+        "description": "Icon atau logo sistem (opsional, maksimal 150 karakter)",
+        "example": "fas fa-users"
+      },
+      "system_order": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Urutan tampilan sistem (opsional, non-negative integer)",
+        "example": 1
+      }
+    },
+    "additionalProperties": false,
+    "description": "Data yang diperlukan untuk membuat sistem baru"
+  },
+  "SchemaPostSystemUpdate": {
+    "type": "object",
+    "properties": {
+      "system_name": {
+        "type": "string",
+        "minLength": 3,
+        "maxLength": 100,
+        "description": "Nama sistem baru (3-100 karakter)",
+        "example": "Updated HR Management System"
+      },
+      "system_url": {
+        "type": "string",
+        "maxLength": 255,
+        "description": "URL sistem baru (opsional, maksimal 255 karakter)",
+        "example": "https://new-hr.company.com"
+      },
+      "system_icon": {
+        "type": "string",
+        "maxLength": 150,
+        "description": "Icon atau logo sistem baru (opsional, maksimal 150 karakter)",
+        "example": "fas fa-user-tie"
+      },
+      "system_order": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Urutan tampilan sistem baru (opsional, non-negative integer)",
+        "example": 2
+      }
+    },
+    "additionalProperties": false,
+    "description": "Data yang dapat diupdate untuk sistem. Minimal satu field harus diisi."
+  },
+  "SchemaResponseSystem": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "example": "System created successfully"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "system_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID unik sistem",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "system_name": {
+            "type": "string",
+            "description": "Nama sistem",
+            "example": "Human Resources Management System"
+          },
+          "system_url": {
+            "type": "string",
+            "description": "URL sistem",
+            "example": "https://hr.company.com"
+          },
+          "system_icon": {
+            "type": "string",
+            "description": "Icon atau logo sistem",
+            "example": "fas fa-users"
+          },
+          "system_order": {
+            "type": "integer",
+            "description": "Urutan tampilan sistem",
+            "example": 1
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal pembuatan sistem",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "created_by": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID user yang membuat sistem",
+            "example": "123e4567-e89b-12d3-a456-426614174002"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal terakhir update sistem",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "updated_by": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID user yang terakhir update sistem",
+            "example": "123e4567-e89b-12d3-a456-426614174002"
+          },
+          "is_delete": {
+            "type": "boolean",
+            "description": "Status soft delete sistem",
+            "example": false
+          }
+        },
+        "required": ["system_id", "system_name", "created_at", "is_delete"]
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp response",
+        "example": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    "required": ["success", "message", "data", "timestamp"]
+  },
+  "SchemaResponseSystemList": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "example": "Systems retrieved successfully"
+      },
+      "data": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "system_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID unik sistem",
+              "example": "123e4567-e89b-12d3-a456-426614174001"
+            },
+            "system_name": {
+              "type": "string",
+              "description": "Nama sistem",
+              "example": "Human Resources Management System"
+            },
+            "system_url": {
+              "type": "string",
+              "description": "URL sistem",
+              "example": "https://hr.company.com"
+            },
+            "system_icon": {
+              "type": "string",
+              "description": "Icon atau logo sistem",
+              "example": "fas fa-users"
+            },
+            "system_order": {
+              "type": "integer",
+              "description": "Urutan tampilan sistem",
+              "example": 1
+            },
+            "created_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Tanggal pembuatan sistem",
+              "example": "2024-01-01T00:00:00.000Z"
+            },
+            "created_by": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID user yang membuat sistem",
+              "example": "123e4567-e89b-12d3-a456-426614174002"
+            },
+            "updated_at": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Tanggal terakhir update sistem",
+              "example": "2024-01-01T00:00:00.000Z"
+            },
+            "updated_by": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID user yang terakhir update sistem",
+              "example": "123e4567-e89b-12d3-a456-426614174002"
+            },
+            "is_delete": {
+              "type": "boolean",
+              "description": "Status soft delete sistem",
+              "example": false
+            }
+          },
+          "required": ["system_id", "system_name", "created_at", "is_delete"]
+        }
+      },
+      "pagination": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "Halaman saat ini",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Jumlah data per halaman",
+            "example": 10
+          },
+          "total": {
+            "type": "integer",
+            "description": "Total jumlah data",
+            "example": 25
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "Total jumlah halaman",
+            "example": 3
+          }
+        },
+        "required": ["page", "limit", "total", "totalPages"]
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp response",
+        "example": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    "required": ["success", "message", "data", "pagination", "timestamp"]
+  },
+  "SchemaResponseSystemDelete": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "example": "System deleted successfully"
+      },
+      "data": {
+        "type": "object",
+        "nullable": true,
+        "example": null
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp response",
+        "example": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    "required": ["success", "message", "data", "timestamp"]
+  }
+}

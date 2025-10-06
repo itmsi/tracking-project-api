@@ -1,0 +1,98 @@
+{
+  "UserListResponse": {
+    "type": "object",
+    "properties": {
+      "users": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/User"
+        },
+        "description": "List of users"
+      },
+      "pagination": {
+        "$ref": "#/components/schemas/Pagination"
+      }
+    },
+    "required": ["users", "pagination"]
+  },
+  "UpdateUserRequest": {
+    "type": "object",
+    "properties": {
+      "first_name": {
+        "type": "string",
+        "description": "User first name"
+      },
+      "last_name": {
+        "type": "string",
+        "description": "User last name"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["admin", "project_manager", "developer", "user"],
+        "description": "User role"
+      },
+      "is_active": {
+        "type": "boolean",
+        "description": "Whether the user is active"
+      }
+    }
+  },
+  "UserActivity": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Activity log ID"
+      },
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID"
+      },
+      "action": {
+        "type": "string",
+        "description": "Action performed"
+      },
+      "entity_type": {
+        "type": "string",
+        "description": "Type of entity affected"
+      },
+      "entity_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "ID of entity affected"
+      },
+      "old_values": {
+        "type": "object",
+        "description": "Old values before change"
+      },
+      "new_values": {
+        "type": "object",
+        "description": "New values after change"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Activity timestamp"
+      }
+    },
+    "required": ["id", "user_id", "action", "entity_type", "entity_id"]
+  },
+  "UserActivityResponse": {
+    "type": "object",
+    "properties": {
+      "activities": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/UserActivity"
+        },
+        "description": "List of user activities"
+      },
+      "pagination": {
+        "$ref": "#/components/schemas/Pagination"
+      }
+    },
+    "required": ["activities", "pagination"]
+  }
+}

@@ -1,0 +1,321 @@
+{
+  "Task": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the task"
+      },
+      "title": {
+        "type": "string",
+        "description": "Task title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Task description"
+      },
+      "project_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Project ID"
+      },
+      "assigned_to": {
+        "type": "string",
+        "format": "uuid",
+        "nullable": true,
+        "description": "User ID assigned to this task"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["todo", "in_progress", "done", "blocked"],
+        "description": "Task status"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "urgent"],
+        "description": "Task priority"
+      },
+      "due_date": {
+        "type": "string",
+        "format": "date",
+        "nullable": true,
+        "description": "Task due date"
+      },
+      "parent_task_id": {
+        "type": "string",
+        "format": "uuid",
+        "nullable": true,
+        "description": "Parent task ID (for subtasks)"
+      },
+      "position": {
+        "type": "integer",
+        "description": "Task position for ordering"
+      },
+      "checklist": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChecklistItem"
+        },
+        "description": "Task checklist items"
+      },
+      "attachments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/TaskAttachment"
+        },
+        "description": "Task attachments"
+      },
+      "creator_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Task creator ID"
+      },
+      "project_name": {
+        "type": "string",
+        "description": "Project name (from join)"
+      },
+      "assigned_user_first_name": {
+        "type": "string",
+        "description": "Assigned user first name (from join)"
+      },
+      "assigned_user_last_name": {
+        "type": "string",
+        "description": "Assigned user last name (from join)"
+      },
+      "creator_first_name": {
+        "type": "string",
+        "description": "Creator first name (from join)"
+      },
+      "creator_last_name": {
+        "type": "string",
+        "description": "Creator last name (from join)"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Task creation timestamp"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Task last update timestamp"
+      }
+    },
+    "required": ["id", "title", "project_id", "status", "priority", "creator_id"]
+  },
+  "CreateTaskRequest": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Task title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Task description"
+      },
+      "project_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Project ID"
+      },
+      "assigned_to": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID to assign task to"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["todo", "in_progress", "done", "blocked"],
+        "default": "todo",
+        "description": "Task status"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "urgent"],
+        "default": "medium",
+        "description": "Task priority"
+      },
+      "due_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Task due date"
+      },
+      "parent_task_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Parent task ID (for subtasks)"
+      },
+      "checklist": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChecklistItem"
+        },
+        "description": "Task checklist items"
+      }
+    },
+    "required": ["title", "project_id"]
+  },
+  "UpdateTaskRequest": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Task title"
+      },
+      "description": {
+        "type": "string",
+        "description": "Task description"
+      },
+      "assigned_to": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID to assign task to"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["todo", "in_progress", "done", "blocked"],
+        "description": "Task status"
+      },
+      "priority": {
+        "type": "string",
+        "enum": ["low", "medium", "high", "urgent"],
+        "description": "Task priority"
+      },
+      "due_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Task due date"
+      },
+      "checklist": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ChecklistItem"
+        },
+        "description": "Task checklist items"
+      }
+    }
+  },
+  "UpdateTaskStatusRequest": {
+    "type": "object",
+    "properties": {
+      "status": {
+        "type": "string",
+        "enum": ["todo", "in_progress", "done", "blocked"],
+        "description": "New task status"
+      },
+      "position": {
+        "type": "integer",
+        "description": "Task position for ordering"
+      }
+    },
+    "required": ["status"]
+  },
+  "AssignTaskRequest": {
+    "type": "object",
+    "properties": {
+      "assigned_to": {
+        "type": "string",
+        "format": "uuid",
+        "nullable": true,
+        "description": "User ID to assign task to (null to unassign)"
+      }
+    },
+    "required": ["assigned_to"]
+  },
+  "UpdateTaskPositionRequest": {
+    "type": "object",
+    "properties": {
+      "position": {
+        "type": "integer",
+        "description": "New task position"
+      }
+    },
+    "required": ["position"]
+  },
+  "ChecklistItem": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "description": "Checklist item ID"
+      },
+      "text": {
+        "type": "string",
+        "description": "Checklist item text"
+      },
+      "completed": {
+        "type": "boolean",
+        "description": "Whether the item is completed"
+      }
+    },
+    "required": ["id", "text", "completed"]
+  },
+  "TaskAttachment": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Attachment ID"
+      },
+      "task_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Task ID"
+      },
+      "filename": {
+        "type": "string",
+        "description": "Original filename"
+      },
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "File URL"
+      },
+      "size": {
+        "type": "integer",
+        "description": "File size in bytes"
+      },
+      "mime_type": {
+        "type": "string",
+        "description": "File MIME type"
+      },
+      "uploaded_by": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID who uploaded the file"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Upload timestamp"
+      }
+    },
+    "required": ["id", "task_id", "filename", "url", "size", "mime_type", "uploaded_by"]
+  },
+  "AddTaskAttachmentRequest": {
+    "type": "object",
+    "properties": {
+      "filename": {
+        "type": "string",
+        "description": "Original filename"
+      },
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "File URL"
+      },
+      "size": {
+        "type": "integer",
+        "description": "File size in bytes"
+      },
+      "mime_type": {
+        "type": "string",
+        "description": "File MIME type"
+      }
+    },
+    "required": ["filename", "url", "size", "mime_type"]
+  }
+}

@@ -1,0 +1,148 @@
+{
+  "Team": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the team"
+      },
+      "name": {
+        "type": "string",
+        "description": "Team name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Team description"
+      },
+      "creator_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team creator ID"
+      },
+      "creator_first_name": {
+        "type": "string",
+        "description": "Creator first name (from join)"
+      },
+      "creator_last_name": {
+        "type": "string",
+        "description": "Creator last name (from join)"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Team creation timestamp"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Team last update timestamp"
+      }
+    },
+    "required": ["id", "name", "creator_id"]
+  },
+  "CreateTeamRequest": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Team name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Team description"
+      }
+    },
+    "required": ["name"]
+  },
+  "UpdateTeamRequest": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Team name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Team description"
+      }
+    }
+  },
+  "TeamMember": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team member ID"
+      },
+      "team_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team ID"
+      },
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member"],
+        "description": "Member role in team"
+      },
+      "first_name": {
+        "type": "string",
+        "description": "User first name (from join)"
+      },
+      "last_name": {
+        "type": "string",
+        "description": "User last name (from join)"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "User email (from join)"
+      },
+      "avatar_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "User avatar URL (from join)"
+      },
+      "joined_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When user joined the team"
+      }
+    },
+    "required": ["id", "team_id", "user_id", "role"]
+  },
+  "AddTeamMemberRequest": {
+    "type": "object",
+    "properties": {
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID to add to team"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member"],
+        "default": "member",
+        "description": "Member role in team"
+      }
+    },
+    "required": ["user_id"]
+  },
+  "UpdateTeamMemberRequest": {
+    "type": "object",
+    "properties": {
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member"],
+        "description": "Member role in team"
+      }
+    },
+    "required": ["role"]
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "/systems/create": {
+    "post": {
+      "tags": ["Systems"],
+      "summary": "Create New System",
+      "description": "Membuat sistem baru dengan informasi nama, URL, icon, dan urutan",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SchemaPostSystemCreate"
+            }
+          }
+        }
+      },
+      "responses": {
+        "201": {
+          "description": "System berhasil dibuat",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaResponseSystem"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Validasi gagal atau data tidak valid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "User tidak terautentikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/systems/get": {
+    "post": {
+      "tags": ["Systems"],
+      "summary": "Get All Systems",
+      "description": "Mendapatkan daftar semua sistem yang aktif dengan pagination dan search",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "requestBody": {
+        "required": false,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SchemaPostSystemGet"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Daftar sistem berhasil diambil",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaResponseSystemList"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "User tidak terautentikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "/systems/{id}": {
+    "get": {
+      "tags": ["Systems"],
+      "summary": "Get System by ID",
+      "description": "Mendapatkan detail sistem berdasarkan ID",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID sistem (UUID)",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Detail sistem berhasil diambil",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaResponseSystem"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Format ID tidak valid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "User tidak terautentikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Sistem tidak ditemukan",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "put": {
+      "tags": ["Systems"],
+      "summary": "Update System",
+      "description": "Mengupdate informasi sistem berdasarkan ID",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID sistem (UUID)",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          }
+        }
+      ],
+      "requestBody": {
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/SchemaPostSystemUpdate"
+            }
+          }
+        }
+      },
+      "responses": {
+        "200": {
+          "description": "Sistem berhasil diupdate",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaResponseSystem"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Validasi gagal atau data tidak valid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "User tidak terautentikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Sistem tidak ditemukan",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "tags": ["Systems"],
+      "summary": "Delete System",
+      "description": "Menghapus sistem berdasarkan ID (soft delete)",
+      "security": [
+        {
+          "bearerAuth": []
+        }
+      ],
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "description": "ID sistem (UUID)",
+          "required": true,
+          "schema": {
+            "type": "string",
+            "format": "uuid",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          }
+        }
+      ],
+      "responses": {
+        "200": {
+          "description": "Sistem berhasil dihapus",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaResponseSystemDelete"
+              }
+            }
+          }
+        },
+        "400": {
+          "description": "Format ID tidak valid",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          "description": "User tidak terautentikasi",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "404": {
+          "description": "Sistem tidak ditemukan",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        },
+        "500": {
+          "description": "Terjadi kesalahan server",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SchemaErrorResponse"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

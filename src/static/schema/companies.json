@@ -1,0 +1,181 @@
+{
+	"SchemaResponseCompanies": {
+		"type": "object",
+		"properties": {
+			"company_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_name": {
+				"type": "string"
+			},
+			"company_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_address": {
+				"type": "string"
+			},
+			"company_email": {
+				"type": "string",
+				"format": "email"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"deleted_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"deleted_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"is_delete": {
+				"type": "boolean"
+			}
+		}
+	},
+	"SchemaPostCompanies": {
+		"type": "object",
+		"properties": {
+			"company_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"company_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_address": {
+				"type": "string",
+				"maxLength": 500
+			},
+			"company_email": {
+				"type": "string",
+				"format": "email",
+				"maxLength": 100
+			}
+		},
+		"required": ["company_name"]
+	},
+	"SchemaPutCompanies": {
+		"type": "object",
+		"properties": {
+			"company_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"company_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_address": {
+				"type": "string",
+				"maxLength": 500
+			},
+			"company_email": {
+				"type": "string",
+				"format": "email",
+				"maxLength": 100
+			}
+		}
+	},
+	"SchemaResponseCompaniesList": {
+		"type": "object",
+		"properties": {
+			"data": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SchemaResponseCompanies"
+				}
+			},
+			"pagination": {
+				"type": "object",
+				"properties": {
+					"current_page": {
+						"type": "integer",
+						"description": "Current page number"
+					},
+					"per_page": {
+						"type": "integer",
+						"description": "Number of items per page"
+					},
+					"total": {
+						"type": "integer",
+						"description": "Total number of records"
+					},
+					"total_pages": {
+						"type": "integer",
+						"description": "Total number of pages"
+					},
+					"has_next_page": {
+						"type": "boolean",
+						"description": "Whether there is a next page"
+					},
+					"has_prev_page": {
+						"type": "boolean",
+						"description": "Whether there is a previous page"
+					}
+				}
+			}
+		}
+	},
+	"SchemaResponseCompaniesHierarchy": {
+		"type": "object",
+		"properties": {
+			"company_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_name": {
+				"type": "string"
+			},
+			"company_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"children": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SchemaResponseCompaniesHierarchy"
+				}
+			}
+		}
+	},
+	"SchemaResponseCompaniesStats": {
+		"type": "object",
+		"properties": {
+			"total_companies": {
+				"type": "integer"
+			},
+			"active_companies": {
+				"type": "integer"
+			},
+			"deleted_companies": {
+				"type": "integer"
+			},
+			"companies_with_parent": {
+				"type": "integer"
+			},
+			"companies_without_parent": {
+				"type": "integer"
+			}
+		}
+	}
+}

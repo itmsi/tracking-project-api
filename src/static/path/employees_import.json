@@ -1,0 +1,122 @@
+{
+	"/employees/import": {
+		"post": {
+			"tags": ["Employees"],
+			"summary": "Import employee data from CSV",
+			"description": "Import employee data including personal information, department, title, and automatically create user accounts from a CSV file",
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"requestBody": {
+				"required": true,
+				"content": {
+					"multipart/form-data": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"file": {
+									"type": "string",
+									"format": "binary",
+									"description": "CSV file containing employee data with required columns: Name, Account, Alias, Posisi (HR/GM/VP/BOD/PUB), Title, Department, Gender, Mobile, Office Number, E-mail, Address, Exmail account, Channel, Activation Status, Disabled, WeChat Workplace"
+								}
+							},
+							"required": ["file"]
+						}
+					}
+				}
+			},
+			"responses": {
+				"200": {
+					"description": "Employee import completed successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponseEmployeeImportResult"
+							}
+						}
+					}
+				},
+				"400": {
+					"description": "Bad request - validation error, invalid CSV structure, or duplicate data found",
+					"content": {
+						"application/json": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"success": {
+										"type": "boolean",
+										"example": false
+									},
+									"message": {
+										"type": "string",
+										"example": "Invalid CSV structure"
+									},
+									"details": {
+										"type": "array",
+										"items": {
+											"type": "string"
+										},
+										"example": ["Missing required columns: Name, Account"]
+									}
+								}
+							}
+						}
+					}
+				},
+				"401": {
+					"description": "Unauthorized - JWT token required or invalid"
+				},
+				"413": {
+					"description": "Payload too large - file size exceeds 10MB limit"
+				},
+				"415": {
+					"description": "Unsupported media type - only CSV files are allowed"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	},
+	"/employees/import/template": {
+		"get": {
+			"tags": ["Employees"],
+			"summary": "Download employee import template",
+			"description": "Download a CSV template file with the correct structure and sample data for importing employees",
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "Employee import template downloaded successfully",
+					"content": {
+						"text/csv": {
+							"schema": {
+								"type": "string",
+								"format": "binary"
+							}
+						}
+					},
+					"headers": {
+						"Content-Disposition": {
+							"schema": {
+								"type": "string"
+							},
+							"example": "attachment; filename=\"employee_import_template.csv\""
+						}
+					}
+				},
+				"401": {
+					"description": "Unauthorized - JWT token required or invalid"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	}
+}

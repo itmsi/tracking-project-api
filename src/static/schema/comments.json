@@ -1,0 +1,145 @@
+{
+  "Comment": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the comment"
+      },
+      "content": {
+        "type": "string",
+        "description": "Comment content"
+      },
+      "task_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Task ID"
+      },
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID who created the comment"
+      },
+      "parent_comment_id": {
+        "type": "string",
+        "format": "uuid",
+        "nullable": true,
+        "description": "Parent comment ID (for replies)"
+      },
+      "attachments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CommentAttachment"
+        },
+        "description": "Comment attachments"
+      },
+      "first_name": {
+        "type": "string",
+        "description": "User first name (from join)"
+      },
+      "last_name": {
+        "type": "string",
+        "description": "User last name (from join)"
+      },
+      "avatar_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "User avatar URL (from join)"
+      },
+      "replies": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Comment"
+        },
+        "description": "Comment replies"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Comment creation timestamp"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Comment last update timestamp"
+      }
+    },
+    "required": ["id", "content", "task_id", "user_id"]
+  },
+  "CreateCommentRequest": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "Comment content"
+      },
+      "parent_comment_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Parent comment ID (for replies)"
+      },
+      "attachments": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/CommentAttachment"
+        },
+        "description": "Comment attachments"
+      }
+    },
+    "required": ["content"]
+  },
+  "UpdateCommentRequest": {
+    "type": "object",
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "Comment content"
+      }
+    },
+    "required": ["content"]
+  },
+  "CommentAttachment": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Attachment ID"
+      },
+      "comment_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Comment ID"
+      },
+      "filename": {
+        "type": "string",
+        "description": "Original filename"
+      },
+      "url": {
+        "type": "string",
+        "format": "uri",
+        "description": "File URL"
+      },
+      "size": {
+        "type": "integer",
+        "description": "File size in bytes"
+      },
+      "mime_type": {
+        "type": "string",
+        "description": "File MIME type"
+      },
+      "uploaded_by": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID who uploaded the file"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Upload timestamp"
+      }
+    },
+    "required": ["id", "comment_id", "filename", "url", "size", "mime_type", "uploaded_by"]
+  }
+}

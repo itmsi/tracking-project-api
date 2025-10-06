@@ -1,0 +1,257 @@
+{
+	"/companies/get": {
+		"post": {
+			"tags": ["Companies"],
+			"security": [
+			{
+				"bearerAuth": []
+			}
+		],
+			"summary": "Get all companies with filtering, pagination, and sorting (via request body)",
+			"description": "Retrieve a paginated list of companies with optional filtering via request body",
+			"requestBody": {
+				"required": false,
+				"content": {
+					"application/json": {
+						"schema": {
+							"type": "object",
+							"properties": {
+								"page": {
+									"type": "integer",
+									"minimum": 1,
+									"default": 1,
+									"description": "Page number for pagination"
+								},
+								"limit": {
+									"type": "integer",
+									"minimum": 1,
+									"maximum": 100,
+									"default": 10,
+									"description": "Number of items per page (max 100)"
+								},
+								"search": {
+									"type": "string",
+									"description": "Search term for company name, address, or email"
+								},
+								"company_name": {
+									"type": "string",
+									"description": "Filter by exact company name"
+								},
+								"sort_by": {
+									"type": "string",
+									"enum": ["company_name", "company_address", "company_email", "created_at", "updated_at"],
+									"default": "company_name",
+									"description": "Column to sort by"
+								},
+								"sort_order": {
+									"type": "string",
+									"enum": ["asc", "desc"],
+									"default": "asc",
+									"description": "Sort order"
+								},
+								"company_parent_id": {
+									"type": "string",
+									"format": "uuid",
+									"description": "Filter by parent company ID"
+								},
+								"is_delete": {
+									"type": "boolean",
+									"default": false,
+									"description": "Filter by deletion status"
+								}
+							}
+						},
+						"example": {
+							"page": 1,
+							"limit": 10,
+							"sort_by": "company_name",
+							"sort_order": "asc",
+							"search": "",
+							"company_name": ""
+						}
+					}
+				}
+			},
+			"responses": {
+				"200": {
+					"description": "Companies retrieved successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponseCompaniesList"
+							}
+						}
+					}
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	},
+	"/companies/create": {
+		"post": {
+			"tags": ["Companies"],
+			"security": [
+			{
+				"bearerAuth": []
+			}
+		],
+			"summary": "Create a new company (via request body)",
+			"description": "Create a new company with the provided information",
+			"requestBody": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/SchemaPostCompanies"
+						}
+					}
+				}
+			},
+			"responses": {
+				"201": {
+					"description": "Company created successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponseCompanies"
+							}
+						}
+					}
+				},
+				"400": {
+					"description": "Bad request - validation error"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	},
+	"/companies/{id}": {
+		"get": {
+			"tags": ["Companies"],
+			"security": [
+			{
+				"bearerAuth": []
+			}
+		],
+			"description": "Retrieve a specific company by its ID",
+			"parameters": [
+				{
+					"name": "id",
+					"in": "path",
+					"required": true,
+					"description": "Company ID",
+					"schema": {
+						"type": "string",
+						"format": "uuid"
+					}
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "Company retrieved successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponseCompanies"
+							}
+						}
+					}
+				},
+				"404": {
+					"description": "Company not found"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		},
+		"put": {
+			"tags": ["Companies"],
+			"security": [
+			{
+				"bearerAuth": []
+			}
+		],
+			"description": "Update an existing company",
+			"parameters": [
+				{
+					"name": "id",
+					"in": "path",
+					"required": true,
+					"description": "Company ID",
+					"schema": {
+						"type": "string",
+						"format": "uuid"
+					}
+				}
+			],
+			"requestBody": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/SchemaPutCompanies"
+						}
+					}
+				}
+			},
+			"responses": {
+				"200": {
+					"description": "Company updated successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponseCompanies"
+							}
+						}
+					}
+				},
+				"400": {
+					"description": "Bad request - validation error"
+				},
+				"404": {
+					"description": "Company not found"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		},
+		"delete": {
+			"tags": ["Companies"],
+			"security": [
+			{
+				"bearerAuth": []
+			}
+		],
+			"description": "Soft delete a company",
+			"parameters": [
+				{
+					"name": "id",
+					"in": "path",
+					"required": true,
+					"description": "Company ID",
+					"schema": {
+						"type": "string",
+						"format": "uuid"
+					}
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "Company deleted successfully"
+				},
+				"404": {
+					"description": "Company not found"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,126 @@
+{
+	"SchemaResponseDepartments": {
+		"type": "object",
+		"properties": {
+			"department_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"department_name": {
+				"type": "string"
+			},
+			"department_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"deleted_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"deleted_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"is_delete": {
+				"type": "boolean"
+			}
+		}
+	},
+	"SchemaPostDepartments": {
+		"type": "object",
+		"properties": {
+			"department_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"department_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_id": {
+				"type": "string",
+				"format": "uuid"
+			}
+		},
+		"required": ["department_name", "company_id"]
+	},
+	"SchemaPutDepartments": {
+		"type": "object",
+		"properties": {
+			"department_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"department_parent_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"company_id": {
+				"type": "string",
+				"format": "uuid"
+			}
+		}
+	},
+	"SchemaResponseDepartmentsList": {
+		"type": "object",
+		"properties": {
+			"data": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SchemaResponseDepartments"
+				}
+			},
+			"pagination": {
+				"type": "object",
+				"properties": {
+					"current_page": {
+						"type": "integer",
+						"description": "Current page number"
+					},
+					"per_page": {
+						"type": "integer",
+						"description": "Number of items per page"
+					},
+					"total": {
+						"type": "integer",
+						"description": "Total number of records"
+					},
+					"total_pages": {
+						"type": "integer",
+						"description": "Total number of pages"
+					},
+					"has_next_page": {
+						"type": "boolean",
+						"description": "Whether there is a next page"
+					},
+					"has_prev_page": {
+						"type": "boolean",
+						"description": "Whether there is a previous page"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,185 @@
+{
+	"SchemaResponseImportTemplate": {
+		"type": "object",
+		"properties": {
+			"headers": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"example": ["Companies", "Departements", "Titles"]
+			},
+			"sampleData": {
+				"type": "array",
+				"items": {
+					"type": "array",
+					"items": {
+						"type": "string"
+					}
+				},
+				"example": [
+					["PT. Example Company", "Human Resources", "HR Manager"],
+					["PT. Example Company", "IT Department", "Software Developer"],
+					["PT. Example Company", "Finance", "Accountant"]
+				]
+			},
+			"instructions": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"example": [
+					"First column: Company names",
+					"Second column: Department names",
+					"Third column: Title/Position names",
+					"Each row represents a company-department-title relationship",
+					"Empty cells will be skipped",
+					"Duplicate data will be rejected"
+				]
+			}
+		}
+	},
+	"SchemaResponseImportResult": {
+		"type": "object",
+		"properties": {
+			"summary": {
+				"type": "object",
+				"properties": {
+					"totalProcessed": {
+						"type": "integer"
+					},
+					"successCount": {
+						"type": "integer"
+					},
+					"errorCount": {
+						"type": "integer"
+					}
+				}
+			},
+			"details": {
+				"type": "array",
+				"items": {
+					"type": "object",
+					"properties": {
+						"type": {
+							"type": "string",
+							"enum": ["company", "department", "title"]
+						},
+						"name": {
+							"type": "string"
+						},
+						"id": {
+							"type": "string",
+							"format": "uuid"
+						},
+						"status": {
+							"type": "string",
+							"enum": ["created", "error"]
+						},
+						"error": {
+							"type": "string"
+						}
+					}
+				}
+			}
+		}
+	},
+	"SchemaResponseImportDuplicate": {
+		"type": "object",
+		"properties": {
+			"type": {
+				"type": "string",
+				"enum": ["company", "department", "title"]
+			},
+			"name": {
+				"type": "string"
+			},
+			"message": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaResponseEmployeeImportResult": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"example": true
+			},
+			"message": {
+				"type": "string",
+				"example": "Employee import completed"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"summary": {
+						"type": "object",
+						"properties": {
+							"total": {
+								"type": "integer",
+								"example": 4
+							},
+							"created": {
+								"type": "integer",
+								"example": 4
+							},
+							"skipped": {
+								"type": "integer",
+								"example": 0
+							},
+							"errors": {
+								"type": "integer",
+								"example": 0
+							}
+						}
+					},
+					"results": {
+						"type": "array",
+						"items": {
+							"type": "object",
+							"properties": {
+								"status": {
+									"type": "string",
+									"enum": ["created", "skipped", "error"],
+									"example": "created"
+								},
+								"data": {
+									"type": "object",
+									"properties": {
+										"employee_id": {
+											"type": "string",
+											"format": "uuid",
+											"example": "123e4567-e89b-12d3-a456-426614174000"
+										},
+										"user_id": {
+											"type": "string",
+											"format": "uuid",
+											"example": "123e4567-e89b-12d3-a456-426614174001"
+										},
+										"name": {
+											"type": "string",
+											"example": "John D"
+										},
+										"account": {
+											"type": "string",
+											"example": "johndoe"
+										},
+										"email": {
+											"type": "string",
+											"example": "john.doe@company.com"
+										}
+									}
+								},
+								"message": {
+									"type": "string",
+									"example": "Employee and user created successfully"
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

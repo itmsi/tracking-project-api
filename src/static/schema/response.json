@@ -1,0 +1,87 @@
+{
+  "ApiResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "description": "Whether the request was successful"
+      },
+      "message": {
+        "type": "string",
+        "description": "Response message"
+      },
+      "data": {
+        "type": "object",
+        "description": "Response data"
+      }
+    },
+    "required": ["success", "message"]
+  },
+  "ApiErrorResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": false,
+        "description": "Whether the request was successful"
+      },
+      "message": {
+        "type": "string",
+        "description": "Error message"
+      },
+      "error": {
+        "type": "string",
+        "description": "Detailed error information"
+      }
+    },
+    "required": ["success", "message"]
+  },
+  "Pagination": {
+    "type": "object",
+    "properties": {
+      "page": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Current page number"
+      },
+      "limit": {
+        "type": "integer",
+        "minimum": 1,
+        "description": "Number of items per page"
+      },
+      "total": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Total number of items"
+      },
+      "pages": {
+        "type": "integer",
+        "minimum": 0,
+        "description": "Total number of pages"
+      }
+    },
+    "required": ["page", "limit", "total", "pages"]
+  },
+  "PaginatedResponse": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true,
+        "description": "Whether the request was successful"
+      },
+      "message": {
+        "type": "string",
+        "description": "Response message"
+      },
+      "data": {
+        "type": "object",
+        "description": "Response data"
+      },
+      "pagination": {
+        "$ref": "#/components/schemas/Pagination"
+      }
+    },
+    "required": ["success", "message", "pagination"]
+  }
+}

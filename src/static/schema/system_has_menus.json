@@ -1,0 +1,343 @@
+{
+	"SchemaSystemHasMenu": {
+		"type": "object",
+		"properties": {
+			"system_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the system"
+			},
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"system_name": {
+				"type": "string",
+				"description": "Name of the system (from join)"
+			},
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu (from join)"
+			},
+			"menu_url": {
+				"type": "string",
+				"description": "URL of the menu (from join)"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Creation timestamp"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who created the relationship"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Last update timestamp"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who last updated the relationship"
+			}
+		}
+	},
+	"SchemaSystemHasMenusPaginatedResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/SchemaSystemHasMenu"
+						},
+						"description": "Array of system-menu relationship objects"
+					},
+					"pagination": {
+						"$ref": "#/components/schemas/SchemaPaginationInfo"
+					}
+				}
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaCreateSystemHasMenu": {
+		"type": "object",
+		"required": ["system_id", "menu_id"],
+		"properties": {
+			"system_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the system"
+			},
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			}
+		}
+	},
+	"SchemaUpdateSystemHasMenu": {
+		"type": "object",
+		"properties": {
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "User who updated the relationship"
+			}
+		}
+	},
+	"SchemaMenuHasPermission": {
+		"type": "object",
+		"properties": {
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"permission_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the permission"
+			},
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu (from join)"
+			},
+			"menu_url": {
+				"type": "string",
+				"description": "URL of the menu (from join)"
+			},
+			"permission_name": {
+				"type": "string",
+				"description": "Name of the permission (from join)"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Creation timestamp"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who created the relationship"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Last update timestamp"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who last updated the relationship"
+			}
+		}
+	},
+	"SchemaMenuHasPermissionsPaginatedResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/SchemaMenuHasPermission"
+						},
+						"description": "Array of menu-permission relationship objects"
+					},
+					"pagination": {
+						"$ref": "#/components/schemas/SchemaPaginationInfo"
+					}
+				}
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaCreateMenuHasPermission": {
+		"type": "object",
+		"required": ["menu_id", "permission_id"],
+		"properties": {
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"permission_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the permission"
+			}
+		}
+	},
+	"SchemaUpdateMenuHasPermission": {
+		"type": "object",
+		"properties": {
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "User who updated the relationship"
+			}
+		}
+	},
+	"SchemaRoleHasMenuPermission": {
+		"type": "object",
+		"properties": {
+			"role_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the role"
+			},
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"permission_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the permission"
+			},
+			"role_name": {
+				"type": "string",
+				"description": "Name of the role (from join)"
+			},
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu (from join)"
+			},
+			"menu_url": {
+				"type": "string",
+				"description": "URL of the menu (from join)"
+			},
+			"permission_name": {
+				"type": "string",
+				"description": "Name of the permission (from join)"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Creation timestamp"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who created the relationship"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Last update timestamp"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who last updated the relationship"
+			}
+		}
+	},
+	"SchemaRoleHasMenuPermissionsPaginatedResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/SchemaRoleHasMenuPermission"
+						},
+						"description": "Array of role-menu-permission relationship objects"
+					},
+					"pagination": {
+						"$ref": "#/components/schemas/SchemaPaginationInfo"
+					}
+				}
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaCreateRoleHasMenuPermission": {
+		"type": "object",
+		"required": ["role_id", "menu_id", "permission_id"],
+		"properties": {
+			"role_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the role"
+			},
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"permission_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the permission"
+			}
+		}
+	},
+	"SchemaUpdateRoleHasMenuPermission": {
+		"type": "object",
+		"properties": {
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "User who updated the relationship"
+			}
+		}
+	}
+}

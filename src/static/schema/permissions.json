@@ -1,0 +1,178 @@
+{
+	"SchemaPermission": {
+		"type": "object",
+		"properties": {
+			"permission_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the permission"
+			},
+			"permission_name": {
+				"type": "string",
+				"description": "Name of the permission"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Creation timestamp"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who created the permission"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Last update timestamp"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who last updated the permission"
+			},
+			"deleted_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Soft delete timestamp"
+			},
+			"deleted_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who deleted the permission"
+			},
+			"is_delete": {
+				"type": "boolean",
+				"description": "Soft delete flag"
+			}
+		}
+	},
+	"SchemaPermissionsPaginatedResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/SchemaPermission"
+						},
+						"description": "Array of permission objects"
+					},
+					"pagination": {
+						"$ref": "#/components/schemas/SchemaPaginationInfo"
+					}
+				}
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaCreatePermission": {
+		"type": "object",
+		"required": ["permission_name"],
+		"properties": {
+			"permission_name": {
+				"type": "string",
+				"description": "Name of the permission"
+			}
+		}
+	},
+	"SchemaUpdatePermission": {
+		"type": "object",
+		"properties": {
+			"permission_name": {
+				"type": "string",
+				"description": "Name of the permission"
+			}
+		}
+	},
+	"SchemaPostPermissionsGet": {
+		"type": "object",
+		"properties": {
+			"page": {
+				"type": "integer",
+				"default": 1,
+				"minimum": 1,
+				"description": "Page number for pagination"
+			},
+			"limit": {
+				"type": "integer",
+				"default": 10,
+				"minimum": 1,
+				"maximum": 100,
+				"description": "Number of items per page (max 100)"
+			},
+			"search": {
+				"type": "string",
+				"description": "Search term for permission name"
+			},
+			"sort_by": {
+				"type": "string",
+				"enum": ["permission_name", "created_at", "updated_at"],
+				"default": "permission_name",
+				"description": "Column to sort by"
+			},
+			"sort_order": {
+				"type": "string",
+				"enum": ["asc", "desc"],
+				"default": "asc",
+				"description": "Sort order"
+			},
+			"permission_name": {
+				"type": "string",
+				"description": "Filter by permission name"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Filter by creator user ID"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Filter by updater user ID"
+			},
+			"is_delete": {
+				"type": "boolean",
+				"default": false,
+				"description": "Filter by deletion status"
+			},
+			"start_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Filter permissions created from this date (ISO 8601 format)"
+			},
+			"end_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Filter permissions created until this date (ISO 8601 format)"
+			}
+		},
+		"example": {
+			"page": 1,
+			"limit": 10,
+			"search": "",
+			"sort_by": "permission_name",
+			"sort_order": "asc",
+			"permission_name": ""
+		}
+	}
+}

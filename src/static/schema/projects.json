@@ -1,0 +1,253 @@
+{
+  "Project": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Unique identifier for the project"
+      },
+      "name": {
+        "type": "string",
+        "description": "Project name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Project description"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["active", "on_hold", "completed", "cancelled"],
+        "description": "Project status"
+      },
+      "team_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team ID (optional)"
+      },
+      "start_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project start date"
+      },
+      "end_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project end date"
+      },
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$",
+        "description": "Project color (hex format)"
+      },
+      "creator_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Project creator ID"
+      },
+      "team_name": {
+        "type": "string",
+        "description": "Team name (from join)"
+      },
+      "creator_first_name": {
+        "type": "string",
+        "description": "Creator first name (from join)"
+      },
+      "creator_last_name": {
+        "type": "string",
+        "description": "Creator last name (from join)"
+      },
+      "created_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Project creation timestamp"
+      },
+      "updated_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Project last update timestamp"
+      }
+    },
+    "required": ["id", "name", "status", "creator_id"]
+  },
+  "CreateProjectRequest": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Project name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Project description"
+      },
+      "team_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team ID (optional)"
+      },
+      "start_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project start date"
+      },
+      "end_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project end date"
+      },
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$",
+        "description": "Project color (hex format)"
+      }
+    },
+    "required": ["name"]
+  },
+  "UpdateProjectRequest": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Project name"
+      },
+      "description": {
+        "type": "string",
+        "description": "Project description"
+      },
+      "status": {
+        "type": "string",
+        "enum": ["active", "on_hold", "completed", "cancelled"],
+        "description": "Project status"
+      },
+      "team_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Team ID"
+      },
+      "start_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project start date"
+      },
+      "end_date": {
+        "type": "string",
+        "format": "date",
+        "description": "Project end date"
+      },
+      "color": {
+        "type": "string",
+        "pattern": "^#[0-9A-Fa-f]{6}$",
+        "description": "Project color (hex format)"
+      }
+    }
+  },
+  "ProjectMember": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Project member ID"
+      },
+      "project_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "Project ID"
+      },
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member", "viewer"],
+        "description": "Member role in project"
+      },
+      "first_name": {
+        "type": "string",
+        "description": "User first name (from join)"
+      },
+      "last_name": {
+        "type": "string",
+        "description": "User last name (from join)"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "description": "User email (from join)"
+      },
+      "avatar_url": {
+        "type": "string",
+        "format": "uri",
+        "description": "User avatar URL (from join)"
+      },
+      "joined_at": {
+        "type": "string",
+        "format": "date-time",
+        "description": "When user joined the project"
+      }
+    },
+    "required": ["id", "project_id", "user_id", "role"]
+  },
+  "AddProjectMemberRequest": {
+    "type": "object",
+    "properties": {
+      "user_id": {
+        "type": "string",
+        "format": "uuid",
+        "description": "User ID to add to project"
+      },
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member", "viewer"],
+        "default": "member",
+        "description": "Member role in project"
+      }
+    },
+    "required": ["user_id"]
+  },
+  "UpdateProjectMemberRequest": {
+    "type": "object",
+    "properties": {
+      "role": {
+        "type": "string",
+        "enum": ["owner", "admin", "member", "viewer"],
+        "description": "Member role in project"
+      }
+    },
+    "required": ["role"]
+  },
+  "ProjectStats": {
+    "type": "object",
+    "properties": {
+      "tasks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Task status"
+            },
+            "count": {
+              "type": "string",
+              "description": "Number of tasks with this status"
+            }
+          }
+        },
+        "description": "Task count by status"
+      },
+      "members": {
+        "type": "integer",
+        "description": "Total number of project members"
+      },
+      "overdue_tasks": {
+        "type": "integer",
+        "description": "Number of overdue tasks"
+      }
+    },
+    "required": ["tasks", "members", "overdue_tasks"]
+  }
+}

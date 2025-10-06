@@ -1,0 +1,142 @@
+{
+	"SchemaResponseSigninMember": {
+		"type": "object",
+		"properties": {
+			"access_token": {
+				"type": "object",
+				"properties": {
+					"sub": {
+						"type": "number"
+					},
+					"roles": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"jti": {
+						"type": "number"
+					},
+					"exp": {
+						"type": "number"
+					}
+				}
+			},
+			"refresh_token": {
+				"type": "object",
+				"properties": {
+					"sub": {
+						"type": "number"
+					},
+					"roles": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"jti": {
+						"type": "number"
+					},
+					"exp": {
+						"type": "number"
+					}
+				}
+			},
+			"exp": {
+				"type": "number"
+			}
+		}
+	},
+	"SchemaPostSigninMember": {
+		"type": "object",
+		"properties": {
+			"member_name": {
+				"type": "string"
+			},
+			"member_password": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaPostRegisterMember": {
+		"type": "object",
+		"properties": {
+			"member_name": {
+				"type": "string"
+			},
+			"member_password": {
+				"type": "string"
+			},
+			"captcha_key": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaResponseMe": {
+		"type": "object",
+		"properties": {
+			"users_id": {
+				"type": "string"
+			},
+			"ful_name": {
+				"type": "string"
+			},
+			"jabatan": {
+				"type": "string"
+			},
+			"role_id": {
+				"type": "string"
+			},
+			"role_name": {
+				"type": "string"
+			},
+			"permissions": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"SchemaPostReset": {
+		"type": "object",
+		"properties": {
+			"email": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaPostResetClient": {
+		"type": "object",
+		"properties": {
+			"email": {
+				"type": "string"
+			},
+			"captcha_key": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaPostResetPassword": {
+		"type": "object",
+		"properties": {
+			"password": {
+				"type": "string"
+			}
+		}
+	},
+	"SchemaPostClientChangePassword": {
+		"type": "object",
+		"properties": {
+			"old_password": {
+				"type": "string"
+			},
+			"password": {
+				"type": "string"
+			},
+			"password_confirmation": {
+				"type": "string"
+			}
+		}
+	}
+}

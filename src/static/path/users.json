@@ -1,0 +1,185 @@
+{
+	"/users/get": {
+		"post": {
+			"tags": ["Users"],
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"description": "Retrieve a paginated list of users with advanced filtering using POST method for complex queries",
+			"requestBody": {
+				"required": false,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/SchemaPostUsersGet"
+						}
+					}
+				}
+			},
+			"responses": {
+				"200": {
+					"description": "Users retrieved successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaUsersPaginatedResponse"
+							}
+						}
+					}
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	},
+	"/users/create": {
+		"post": {
+			"tags": ["Users"],
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"description": "Create a new user with the provided information",
+			"requestBody": {
+				"required": true,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/SchemaCreateUser"
+						}
+					}
+				}
+			},
+			"responses": {
+				"201": {
+					"description": "User created successfully",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaUser"
+							}
+						}
+					}
+				},
+				"400": {
+					"description": "Bad request - validation error"
+				},
+				"500": {
+					"description": "Internal server error"
+				}
+			}
+		}
+	},
+	"/users/{users_id}": {
+		"get": {
+			"tags": [
+				"Users"
+			],
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"parameters": [
+				{
+					"in": "path",
+					"name": "users_id",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "OK",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"put": {
+			"tags": [
+				"Users"
+			],
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"parameters": [
+				{
+					"in": "path",
+					"name": "users_id",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			],
+			"requestBody": {
+				"required": false,
+				"content": {
+					"application/json": {
+						"schema": {
+							"$ref": "#/components/schemas/SchemaPostUsers"
+						}
+					}
+				}
+			},
+			"responses": {
+				"200": {
+					"description": "OK",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponse"
+							}
+						}
+					}
+				}
+			}
+		},
+		"delete": {
+			"tags": [
+				"Users"
+			],
+			"security": [
+				{
+					"bearerAuth": []
+				}
+			],
+			"parameters": [
+				{
+					"in": "path",
+					"name": "users_id",
+					"required": true,
+					"schema": {
+						"type": "string"
+					}
+				}
+			],
+			"responses": {
+				"200": {
+					"description": "OK",
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SchemaResponse"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

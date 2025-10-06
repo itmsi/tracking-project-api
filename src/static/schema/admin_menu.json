@@ -1,0 +1,266 @@
+{
+	"SchemaMenu": {
+		"type": "object",
+		"properties": {
+			"menu_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Unique identifier for the menu"
+			},
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu"
+			},
+			"menu_parent_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "Parent menu ID for hierarchical structure"
+			},
+			"menu_url": {
+				"type": "string",
+				"nullable": true,
+				"description": "URL path for the menu"
+			},
+			"menu_icon": {
+				"type": "string",
+				"description": "Icon class for the menu"
+			},
+			"menu_order": {
+				"type": "integer",
+				"description": "Order of the menu"
+			},
+			"system_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "System ID associated with the menu"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Creation timestamp"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who created the menu"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Last update timestamp"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who last updated the menu"
+			},
+			"deleted_at": {
+				"type": "string",
+				"format": "date-time",
+				"nullable": true,
+				"description": "Soft delete timestamp"
+			},
+			"deleted_by": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "User who deleted the menu"
+			},
+			"is_delete": {
+				"type": "boolean",
+				"description": "Soft delete flag"
+			}
+		}
+	},
+	"SchemaMenusResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SchemaMenu"
+				},
+				"description": "Array of menu objects"
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaCreateMenu": {
+		"type": "object",
+		"required": ["menu_name"],
+		"properties": {
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu"
+			},
+			"menu_parent_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "Parent menu ID for hierarchical structure"
+			},
+			"menu_url": {
+				"type": "string",
+				"nullable": true,
+				"description": "URL path for the menu"
+			},
+			"menu_icon": {
+				"type": "string",
+				"nullable": true,
+				"description": "Icon class for the menu"
+			},
+			"menu_order": {
+				"type": "integer",
+				"nullable": true,
+				"description": "Order of the menu"
+			},
+			"system_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "System ID associated with the menu"
+			}
+		}
+	},
+	"SchemaUpdateMenu": {
+		"type": "object",
+		"properties": {
+			"menu_name": {
+				"type": "string",
+				"description": "Name of the menu"
+			},
+			"menu_parent_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "Parent menu ID for hierarchical structure"
+			},
+			"menu_url": {
+				"type": "string",
+				"nullable": true,
+				"description": "URL path for the menu"
+			},
+			"menu_icon": {
+				"type": "string",
+				"nullable": true,
+				"description": "Icon class for the menu"
+			},
+			"menu_order": {
+				"type": "integer",
+				"nullable": true,
+				"description": "Order of the menu"
+			},
+			"system_id": {
+				"type": "string",
+				"format": "uuid",
+				"nullable": true,
+				"description": "System ID associated with the menu"
+			}
+		}
+	},
+	"SchemaPaginationInfo": {
+		"type": "object",
+		"properties": {
+			"current_page": {
+				"type": "integer",
+				"description": "Current page number"
+			},
+			"per_page": {
+				"type": "integer",
+				"description": "Number of items per page"
+			},
+			"total": {
+				"type": "integer",
+				"description": "Total number of items"
+			},
+			"total_pages": {
+				"type": "integer",
+				"description": "Total number of pages"
+			},
+			"has_next_page": {
+				"type": "boolean",
+				"description": "Whether there is a next page"
+			},
+			"has_prev_page": {
+				"type": "boolean",
+				"description": "Whether there is a previous page"
+			}
+		}
+	},
+	"SchemaMenusPaginatedResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Response message"
+			},
+			"data": {
+				"type": "object",
+				"properties": {
+					"data": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/SchemaMenu"
+						},
+						"description": "Array of menu objects"
+					},
+					"pagination": {
+						"$ref": "#/components/schemas/SchemaPaginationInfo"
+					}
+				}
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	},
+	"SchemaErrorResponse": {
+		"type": "object",
+		"properties": {
+			"success": {
+				"type": "boolean",
+				"description": "Indicates if the request was successful"
+			},
+			"message": {
+				"type": "string",
+				"description": "Error message"
+			},
+			"errors": {
+				"type": "array",
+				"items": {
+					"type": "string"
+				},
+				"nullable": true,
+				"description": "Array of error details"
+			},
+			"timestamp": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Response timestamp"
+			}
+		}
+	}
+}

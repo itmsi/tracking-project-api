@@ -1,0 +1,200 @@
+{
+	"SchemaResponseTitles": {
+		"type": "object",
+		"properties": {
+			"title_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"title_name": {
+				"type": "string"
+			},
+			"department_id": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"department_name": {
+				"type": "string",
+				"description": "Department name from departments table"
+			},
+			"created_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"updated_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"deleted_at": {
+				"type": "string",
+				"format": "date-time"
+			},
+			"deleted_by": {
+				"type": "string",
+				"format": "uuid"
+			},
+			"is_delete": {
+				"type": "boolean"
+			}
+		}
+	},
+	"SchemaPostTitles": {
+		"type": "object",
+		"properties": {
+			"title_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"department_id": {
+				"type": "string",
+				"format": "uuid"
+			}
+		},
+		"required": ["title_name", "department_id"]
+	},
+	"SchemaPutTitles": {
+		"type": "object",
+		"properties": {
+			"title_name": {
+				"type": "string",
+				"minLength": 2,
+				"maxLength": 100
+			},
+			"department_id": {
+				"type": "string",
+				"format": "uuid"
+			}
+		}
+	},
+	"SchemaResponseTitlesList": {
+		"type": "object",
+		"properties": {
+			"data": {
+				"type": "array",
+				"items": {
+					"$ref": "#/components/schemas/SchemaResponseTitles"
+				}
+			},
+			"pagination": {
+				"type": "object",
+				"properties": {
+					"current_page": {
+						"type": "integer",
+						"description": "Current page number"
+					},
+					"per_page": {
+						"type": "integer",
+						"description": "Number of items per page"
+					},
+					"total": {
+						"type": "integer",
+						"description": "Total number of records"
+					},
+					"total_pages": {
+						"type": "integer",
+						"description": "Total number of pages"
+					},
+					"has_next_page": {
+						"type": "boolean",
+						"description": "Whether there is a next page"
+					},
+					"has_prev_page": {
+						"type": "boolean",
+						"description": "Whether there is a previous page"
+					}
+				}
+			}
+		}
+	},
+	"SchemaPostTitlesGet": {
+		"type": "object",
+		"properties": {
+			"page": {
+				"type": "integer",
+				"default": 1,
+				"minimum": 1,
+				"description": "Page number for pagination"
+			},
+			"limit": {
+				"type": "integer",
+				"default": 10,
+				"minimum": 1,
+				"maximum": 100,
+				"description": "Number of items per page (max 100)"
+			},
+			"search": {
+				"type": "string",
+				"description": "Search term for title name"
+			},
+			"sort_by": {
+				"type": "string",
+				"enum": ["title_name", "department_id", "created_at", "updated_at"],
+				"default": "title_name",
+				"description": "Column to sort by"
+			},
+			"sort_order": {
+				"type": "string",
+				"enum": ["asc", "desc"],
+				"default": "asc",
+				"description": "Sort order"
+			},
+			"title_name": {
+				"type": "string",
+				"description": "Filter by title name"
+			},
+			"department_id": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Filter by department ID"
+			},
+			"department_name": {
+				"type": "string",
+				"description": "Filter by department name"
+			},
+			"created_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Filter by creator user ID"
+			},
+			"updated_by": {
+				"type": "string",
+				"format": "uuid",
+				"description": "Filter by updater user ID"
+			},
+			"is_delete": {
+				"type": "boolean",
+				"default": false,
+				"description": "Filter by deletion status"
+			},
+			"start_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Filter titles created from this date (ISO 8601 format)"
+			},
+			"end_date": {
+				"type": "string",
+				"format": "date-time",
+				"description": "Filter titles created until this date (ISO 8601 format)"
+			}
+		},
+		"example": {
+			"page": 1,
+			"limit": 10,
+			"search": "",
+			"sort_by": "title_name",
+			"sort_order": "asc",
+			"department_id": "",
+			"department_name": "",
+			"title_name": ""
+		}
+	}
+}

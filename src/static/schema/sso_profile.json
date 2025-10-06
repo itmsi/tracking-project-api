@@ -1,0 +1,147 @@
+{
+  "SchemaPostSSOProfileUpdateCombined": {
+    "type": "object",
+    "properties": {
+      "employee_name": {
+        "type": "string",
+        "minLength": 2,
+        "maxLength": 100,
+        "description": "Nama employee baru (2-100 karakter)",
+        "example": "John Doe"
+      },
+      "employee_email": {
+        "type": "string",
+        "format": "email",
+        "maxLength": 100,
+        "description": "Email employee baru (format email valid, maksimal 100 karakter)",
+        "example": "john.doe@company.com"
+      },
+      "employee_foto": {
+        "type": "string",
+        "format": "binary",
+        "description": "File foto profil employee (format: image/jpeg, image/png, image/gif, image/webp, maksimal 5MB)",
+        "example": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+      },
+      "current_password": {
+        "type": "string",
+        "description": "Password lama untuk verifikasi (required jika ingin mengubah password)",
+        "example": "old_password"
+      },
+      "new_password": {
+        "type": "string",
+        "minLength": 6,
+        "pattern": "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$",
+        "description": "Password baru (minimal 6 karakter, harus mengandung minimal 1 huruf kecil, 1 huruf besar, dan 1 angka)",
+        "example": "NewPassword123"
+      },
+      "confirm_password": {
+        "type": "string",
+        "description": "Konfirmasi password baru (harus sama dengan new_password)",
+        "example": "NewPassword123"
+      }
+    },
+    "additionalProperties": false,
+    "description": "Minimal satu field harus diisi. Jika ingin mengubah password, semua field password harus diisi. Content-Type harus multipart/form-data untuk upload file."
+  },
+  "SchemaResponseSSOProfile": {
+    "type": "object",
+    "properties": {
+      "success": {
+        "type": "boolean",
+        "example": true
+      },
+      "message": {
+        "type": "string",
+        "example": "Profil berhasil diambil"
+      },
+      "data": {
+        "type": "object",
+        "properties": {
+          "employee_id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "ID employee",
+            "example": "123e4567-e89b-12d3-a456-426614174001"
+          },
+          "employee_name": {
+            "type": "string",
+            "description": "Nama employee",
+            "example": "John Doe"
+          },
+          "employee_email": {
+            "type": "string",
+            "format": "email",
+            "description": "Email employee",
+            "example": "john.doe@company.com"
+          },
+          "employee_exmail_account": {
+            "type": "string",
+            "format": "email",
+            "description": "External mail account untuk login",
+            "example": "john.doe@company.com"
+          },
+          "employee_mobile": {
+            "type": "string",
+            "description": "Nomor handphone employee",
+            "example": "+6281234567890"
+          },
+          "employee_office_number": {
+            "type": "string",
+            "description": "Nomor telepon kantor employee",
+            "example": "+62212345678"
+          },
+          "employee_address": {
+            "type": "string",
+            "description": "Alamat rumah employee",
+            "example": "Jl. Sudirman No. 123, Jakarta"
+          },
+          "employee_channel": {
+            "type": "string",
+            "description": "Channel atau sumber employee",
+            "example": "LinkedIn"
+          },
+          "employee_foto": {
+            "type": "string",
+            "description": "Foto profil employee (base64 atau URL)",
+            "example": "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQ..."
+          },
+          "title_name": {
+            "type": "string",
+            "description": "Nama title/jabatan employee",
+            "example": "Front End Developer"
+          },
+          "department_name": {
+            "type": "string",
+            "description": "Nama departemen employee",
+            "example": "IT"
+          },
+          "company_name": {
+            "type": "string",
+            "description": "Nama perusahaan employee",
+            "example": "MSI"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal pembuatan employee",
+            "example": "2024-01-01T00:00:00.000Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Tanggal terakhir update employee",
+            "example": "2024-01-01T00:00:00.000Z"
+          }
+        },
+        "required": ["employee_id", "employee_name", "employee_email", "title_name", "department_name", "company_name", "created_at", "updated_at"]
+      },
+      "timestamp": {
+        "type": "string",
+        "format": "date-time",
+        "description": "Timestamp response",
+        "example": "2024-01-01T00:00:00.000Z"
+      }
+    },
+    "required": ["success", "message", "data", "timestamp"]
+  }
+}
