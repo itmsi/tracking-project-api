@@ -27,6 +27,12 @@ class TeamHandler {
         created_by: userId
       }
 
+      // Convert status to is_active if provided
+      if (teamData.status) {
+        teamData.is_active = teamData.status === 'active'
+        delete teamData.status
+      }
+
       const team = await teamRepository.createTeam(teamData)
 
       // Add creator as team owner
@@ -66,9 +72,16 @@ class TeamHandler {
 
   async updateTeam(req, res, next) {
     try {
+      console.log('=== Handler updateTeam START ===');
       const userId = req.user.id
       const { id } = req.params
       const updateData = req.body
+
+      // Convert status to is_active if provided
+      if (updateData.status) {
+        updateData.is_active = updateData.status === 'active'
+        delete updateData.status
+      }
 
       // Get old team data for activity log
       const oldTeam = await teamRepository.getTeamById(id, userId)
@@ -77,6 +90,7 @@ class TeamHandler {
       }
 
       const team = await teamRepository.updateTeam(id, updateData, userId)
+      console.log('Team updated:', team ? 'SUCCESS' : 'NULL');
 
       // Create activity log
       await createActivityLog({
@@ -91,6 +105,9 @@ class TeamHandler {
 
       return response.success(res, 200, 'Team berhasil diperbarui', team)
     } catch (error) {
+      console.error('=== Handler updateTeam ERROR ===');
+      console.error('Error:', error.message);
+      console.error('Stack:', error.stack);
       if (error.message.includes('Tidak memiliki akses')) {
         return response.error(res, 403, error.message)
       }

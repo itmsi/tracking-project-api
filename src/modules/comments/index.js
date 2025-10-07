@@ -10,12 +10,12 @@ const { verifyToken } = require('../../middlewares/token')
 router.use(verifyToken)
 
 // Comment CRUD routes
-router.get('/task/:taskId', 
+router.get('/', 
   validateRequest(commentValidation.getComments), 
   commentHandler.getComments
 )
 
-router.post('/task/:taskId', 
+router.post('/', 
   validateRequest(commentValidation.createComment), 
   commentHandler.createComment
 )

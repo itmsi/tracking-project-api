@@ -52,6 +52,28 @@ const authValidation = {
         'string.uri': 'URL avatar tidak valid'
       })
     })
+  },
+  changePassword: {
+    body: Joi.object({
+      current_password: Joi.string().required().messages({
+        'any.required': 'Password lama harus diisi'
+      }),
+      new_password: Joi.string().min(6).required().messages({
+        'string.min': 'Password baru minimal 6 karakter',
+        'any.required': 'Password baru harus diisi'
+      }),
+      confirm_password: Joi.string().valid(Joi.ref('new_password')).required().messages({
+        'any.only': 'Konfirmasi password tidak sama dengan password baru',
+        'any.required': 'Konfirmasi password harus diisi'
+      })
+    })
+  },
+  refreshToken: {
+    body: Joi.object({
+      refresh_token: Joi.string().required().messages({
+        'any.required': 'Refresh token harus diisi'
+      })
+    })
   }
 }
 

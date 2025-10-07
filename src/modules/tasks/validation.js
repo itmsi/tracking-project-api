@@ -29,7 +29,12 @@ const taskValidation = {
         'string.uuid': 'Project ID tidak valid',
         'any.required': 'Project ID harus diisi'
       }),
-      assigned_to: Joi.string().uuid().optional().messages({
+      assigned_to: Joi.string().uuid().allow('', null).optional().custom((value, helpers) => {
+        if (value === '') {
+          return null;
+        }
+        return value;
+      }).messages({
         'string.uuid': 'Assigned user ID tidak valid'
       }),
       status: Joi.string().valid('todo', 'in_progress', 'done', 'blocked').default('todo'),
@@ -72,7 +77,12 @@ const taskValidation = {
       description: Joi.string().max(2000).optional().messages({
         'string.max': 'Deskripsi maksimal 2000 karakter'
       }),
-      assigned_to: Joi.string().uuid().optional().messages({
+      assigned_to: Joi.string().uuid().allow('', null).optional().custom((value, helpers) => {
+        if (value === '') {
+          return null;
+        }
+        return value;
+      }).messages({
         'string.uuid': 'Assigned user ID tidak valid'
       }),
       status: Joi.string().valid('todo', 'in_progress', 'done', 'blocked').optional(),
@@ -165,7 +175,12 @@ const taskValidation = {
       description: Joi.string().max(2000).optional().messages({
         'string.max': 'Deskripsi maksimal 2000 karakter'
       }),
-      assigned_to: Joi.string().uuid().optional().messages({
+      assigned_to: Joi.string().uuid().allow('', null).optional().custom((value, helpers) => {
+        if (value === '') {
+          return null;
+        }
+        return value;
+      }).messages({
         'string.uuid': 'Assigned user ID tidak valid'
       }),
       priority: Joi.string().valid('low', 'medium', 'high', 'urgent').default('medium'),

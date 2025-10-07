@@ -37,4 +37,24 @@ routing.use(`${API_TAG}/teams`, teamsModule)
 const usersModule = require('../../modules/users')
 routing.use(`${API_TAG}/users`, usersModule)
 
+// Notifications Module
+const notificationsModule = require('../../modules/notifications')
+routing.use(`${API_TAG}/notifications`, notificationsModule)
+
+// Analytics Module
+const analyticsModule = require('../../modules/analytics')
+routing.use(`${API_TAG}/analytics`, analyticsModule)
+
+// Calendar Module
+const calendarModule = require('../../modules/calendar')
+routing.use(`${API_TAG}/calendar`, calendarModule)
+
+// Settings Module
+const settingsModule = require('../../modules/settings')
+routing.use(`${API_TAG}/settings`, settingsModule)
+
+// Upload Module
+const uploadModule = require('../../modules/upload')
+routing.use(`${API_TAG}/upload`, uploadModule)
+
 module.exports = routing;

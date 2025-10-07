@@ -16,6 +16,13 @@ router.get('/',
 )
 
 router.post('/', 
+  (req, res, next) => {
+    // Clean up assigned_to field - convert empty string to null
+    if (req.body.assigned_to === '') {
+      req.body.assigned_to = null;
+    }
+    next();
+  },
   validateRequest(taskValidation.createTask), 
   taskHandler.createTask
 )

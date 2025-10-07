@@ -19,6 +19,11 @@ async function runAllSeeders() {
     const teamMembersSeeder = require('./0006_team_members_seeder');
     const projectMembersSeeder = require('./0007_project_members_seeder');
     const activityLogsSeeder = require('./0008_activity_logs_seeder');
+    const notificationsSeeder = require('./0009_notifications_seeder');
+    const calendarEventsSeeder = require('./0010_calendar_events_seeder');
+    const systemSettingsSeeder = require('./0011_system_settings_seeder');
+    const userSettingsSeeder = require('./0012_user_settings_seeder');
+    const fileUploadsSeeder = require('./0013_file_uploads_seeder');
 
     // Jalankan seeder secara berurutan
     console.log('👥 Seeding users...');
@@ -53,6 +58,26 @@ async function runAllSeeders() {
     await activityLogsSeeder.seed(knex);
     console.log('✅ Activity logs seeded successfully\n');
 
+    console.log('🔔 Seeding notifications...');
+    await notificationsSeeder.seed(knex);
+    console.log('✅ Notifications seeded successfully\n');
+
+    console.log('📅 Seeding calendar events...');
+    await calendarEventsSeeder.seed(knex);
+    console.log('✅ Calendar events seeded successfully\n');
+
+    console.log('⚙️  Seeding system settings...');
+    await systemSettingsSeeder.seed(knex);
+    console.log('✅ System settings seeded successfully\n');
+
+    console.log('👤 Seeding user settings...');
+    await userSettingsSeeder.seed(knex);
+    console.log('✅ User settings seeded successfully\n');
+
+    console.log('📁 Seeding file uploads...');
+    await fileUploadsSeeder.seed(knex);
+    console.log('✅ File uploads seeded successfully\n');
+
     console.log('🎉 Semua seeder berhasil dijalankan!');
     console.log('\n📝 Data yang tersedia:');
     console.log('   • 6 Users (admin, project_manager, developer, user, designer, tester)');
@@ -63,6 +88,11 @@ async function runAllSeeders() {
     console.log('   • Team members untuk setiap team');
     console.log('   • Project members untuk setiap project');
     console.log('   • Activity logs untuk tracking semua aktivitas');
+    console.log('   • 25+ Notifications untuk berbagai aktivitas');
+    console.log('   • 20+ Calendar events (meetings, deadlines, reminders)');
+    console.log('   • System settings untuk konfigurasi aplikasi');
+    console.log('   • User settings untuk setiap user (theme, language, preferences)');
+    console.log('   • 30+ File uploads (avatars, task attachments, project files)');
     
     console.log('\n🔑 Akun untuk testing:');
     console.log('   • Admin: admin@tracker.com / password123');

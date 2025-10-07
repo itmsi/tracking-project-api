@@ -167,6 +167,80 @@ class AuthHandler {
     }
   }
 
+  async changePassword(req, res, next) {
+    try {
+      const userId = req.user.id
+      const { current_password, new_password } = req.body
+
+      // Verify current password
+      const user = await authRepository.findUserById(userId)
+      if (!user) {
+        return response.error(res, 404, 'User tidak ditemukan')
+      }
+
+      const isCurrentPasswordValid = await authRepository.verifyPassword(user.email, current_password)
+      if (!isCurrentPasswordValid) {
+        return response.error(res, 400, 'Password lama salah')
+      }
+
+      // Update password
+      const updatedUser = await authRepository.updatePassword(userId, new_password)
+      if (!updatedUser) {
+        return response.error(res, 500, 'Gagal mengubah password')
+      }
+
+      // Create activity log
+      await createActivityLog({
+        user_id: userId,
+        action: 'updated',
+        entity_type: 'user',
+        entity_id: userId,
+        description: `User ${user.first_name} ${user.last_name} mengubah password`
+      })
+
+      return response.success(res, 200, 'Password berhasil diubah')
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async logout(req, res, next) {
+    try {
+      const userId = req.user.id
+
+      // Create activity log
+      await createActivityLog({
+        user_id: userId,
+        action: 'logout',
+        entity_type: 'user',
+        entity_id: userId,
+        description: `User logout`
+      })
+
+      // In a real implementation, you might want to blacklist the token
+      // For now, we'll just return success
+      return response.success(res, 200, 'Logout berhasil')
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async refreshToken(req, res, next) {
+    try {
+      const { refresh_token } = req.body
+
+      // In a real implementation, you would:
+      // 1. Verify the refresh token
+      // 2. Generate a new access token
+      // 3. Optionally generate a new refresh token
+      
+      // For now, we'll return an error since we don't have refresh token implementation
+      return response.error(res, 501, 'Refresh token belum diimplementasikan')
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
 
 module.exports = new AuthHandler()

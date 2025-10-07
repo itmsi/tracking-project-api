@@ -6,10 +6,9 @@ class CommentHandler {
   async getComments(req, res, next) {
     try {
       const userId = req.user.id
-      const { taskId } = req.params
-      const filters = req.query
+      const { task_id, project_id } = req.query
 
-      const result = await commentRepository.getComments(taskId, filters)
+      const result = await commentRepository.getComments({ task_id, project_id }, req.query)
       
       return response.success(res, 200, 'Daftar komentar berhasil diambil', result)
     } catch (error) {
@@ -20,23 +19,28 @@ class CommentHandler {
   async createComment(req, res, next) {
     try {
       const userId = req.user.id
-      const { taskId } = req.params
+      const { task_id, project_id, content, parent_comment_id, attachments } = req.body
+      
       const commentData = {
-        ...req.body,
-        task_id: taskId,
+        content,
+        task_id,
+        project_id,
+        parent_comment_id,
+        attachments,
         user_id: userId
       }
 
       const comment = await commentRepository.createComment(commentData)
 
       // Create activity log
+      const entityType = task_id ? 'task' : 'project'
       await createActivityLog({
         user_id: userId,
         action: 'created',
         entity_type: 'comment',
         entity_id: comment.id,
         new_values: comment,
-        description: `Komentar ditambahkan pada task`
+        description: `Komentar ditambahkan pada ${entityType}`
       })
 
       return response.success(res, 201, 'Komentar berhasil ditambahkan', comment)

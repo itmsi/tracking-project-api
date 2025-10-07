@@ -9,9 +9,20 @@ class CommentRepository {
     return comment
   }
 
-  async getComments(taskId, filters = {}) {
-    const { page = 1, limit = 20 } = filters
+  async getComments(filters, queryParams = {}) {
+    const { task_id, project_id } = filters
+    const { page = 1, limit = 20 } = queryParams
     const offset = (page - 1) * limit
+
+    let whereConditions = { 'comments.is_active': true }
+    
+    if (task_id) {
+      whereConditions['comments.task_id'] = task_id
+    }
+    
+    if (project_id) {
+      whereConditions['comments.project_id'] = project_id
+    }
 
     const comments = await pgCore('comments')
       .select([
@@ -22,15 +33,13 @@ class CommentRepository {
         'users.avatar_url'
       ])
       .leftJoin('users', 'comments.user_id', 'users.id')
-      .where('comments.task_id', taskId)
-      .where('comments.is_active', true)
+      .where(whereConditions)
       .orderBy('comments.created_at', 'asc')
       .limit(limit)
       .offset(offset)
 
     const total = await pgCore('comments')
-      .where('task_id', taskId)
-      .where('is_active', true)
+      .where(whereConditions)
       .count('* as count')
       .first()
 
@@ -117,11 +126,23 @@ class CommentRepository {
     
     if (comment) return true
 
-    // Check if user is project member with appropriate role
-    const projectMember = await pgCore('project_members')
+    // Check if user is project member with appropriate role (for task comments)
+    const taskProjectMember = await pgCore('project_members')
       .select('project_members.*')
       .leftJoin('tasks', 'project_members.project_id', 'tasks.project_id')
       .leftJoin('comments', 'tasks.id', 'comments.task_id')
+      .where('comments.id', commentId)
+      .where('project_members.user_id', userId)
+      .where('project_members.is_active', true)
+      .whereIn('project_members.role', ['owner', 'admin'])
+      .first()
+    
+    if (taskProjectMember) return true
+
+    // Check if user is project member with appropriate role (for project comments)
+    const projectMember = await pgCore('project_members')
+      .select('project_members.*')
+      .leftJoin('comments', 'project_members.project_id', 'comments.project_id')
       .where('comments.id', commentId)
       .where('project_members.user_id', userId)
       .where('project_members.is_active', true)

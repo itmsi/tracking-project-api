@@ -29,4 +29,20 @@ router.put('/profile',
   authHandler.updateProfile
 )
 
+router.put('/change-password', 
+  verifyToken, 
+  validateRequest(authValidation.changePassword), 
+  authHandler.changePassword
+)
+
+router.post('/logout', 
+  verifyToken, 
+  authHandler.logout
+)
+
+router.post('/refresh-token', 
+  validateRequest(authValidation.refreshToken), 
+  authHandler.refreshToken
+)
+
 module.exports = router

@@ -70,6 +70,22 @@ class AuthRepository {
     return user
   }
 
+  async updatePassword(id, newPassword) {
+    // Hash new password
+    const saltRounds = 10
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds)
+    
+    const [user] = await pgCore('users')
+      .where({ id })
+      .update({ 
+        password: hashedPassword,
+        updated_at: new Date()
+      })
+      .returning(['id', 'email', 'first_name', 'last_name', 'role', 'avatar_url', 'is_active', 'created_at', 'updated_at'])
+    
+    return user
+  }
+
 
   async getUsersList(filters = {}) {
     const { page = 1, limit = 10, search, role } = filters

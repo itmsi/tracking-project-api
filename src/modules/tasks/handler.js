@@ -21,13 +21,17 @@ class TaskHandler {
 
   async createTask(req, res, next) {
     try {
+      console.log('=== Handler createTask START ===');
       const userId = req.user.id
       const taskData = {
         ...req.body,
         created_by: userId
       }
+      console.log('UserId:', userId);
+      console.log('TaskData:', taskData);
 
       const task = await taskRepository.createTask(taskData)
+      console.log('Task created:', task ? 'SUCCESS' : 'NULL');
 
       // Create activity log
       await createActivityLog({
@@ -41,6 +45,9 @@ class TaskHandler {
 
       return response.success(res, 201, 'Task berhasil dibuat', task)
     } catch (error) {
+      console.error('=== Handler createTask ERROR ===');
+      console.error('Error:', error.message);
+      console.error('Stack:', error.stack);
       next(error)
     }
   }

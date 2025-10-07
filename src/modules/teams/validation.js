@@ -18,6 +18,9 @@ const teamValidation = {
       }),
       description: Joi.string().max(1000).optional().messages({
         'string.max': 'Deskripsi maksimal 1000 karakter'
+      }),
+      status: Joi.string().valid('active', 'inactive').optional().messages({
+        'any.only': 'Status harus active atau inactive'
       })
     })
   },
@@ -45,6 +48,9 @@ const teamValidation = {
       }),
       description: Joi.string().max(1000).optional().messages({
         'string.max': 'Deskripsi maksimal 1000 karakter'
+      }),
+      status: Joi.string().valid('active', 'inactive').optional().messages({
+        'any.only': 'Status harus active atau inactive'
       })
     })
   },
