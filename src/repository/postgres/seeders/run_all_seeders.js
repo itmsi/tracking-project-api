@@ -24,6 +24,10 @@ async function runAllSeeders() {
     const systemSettingsSeeder = require('./0011_system_settings_seeder');
     const userSettingsSeeder = require('./0012_user_settings_seeder');
     const fileUploadsSeeder = require('./0013_file_uploads_seeder');
+    const taskDetailsSeeder = require('./0014_task_details_seeder');
+    const taskChatSeeder = require('./0015_task_chat_seeder');
+    const taskAttachmentsSeeder = require('./0016_task_attachments_seeder');
+    const taskMembersSeeder = require('./0017_task_members_seeder');
 
     // Jalankan seeder secara berurutan
     console.log('👥 Seeding users...');
@@ -78,6 +82,22 @@ async function runAllSeeders() {
     await fileUploadsSeeder.seed(knex);
     console.log('✅ File uploads seeded successfully\n');
 
+    console.log('📋 Seeding task details...');
+    await taskDetailsSeeder.seed(knex);
+    console.log('✅ Task details seeded successfully\n');
+
+    console.log('💬 Seeding task chat...');
+    await taskChatSeeder.seed(knex);
+    console.log('✅ Task chat seeded successfully\n');
+
+    console.log('📎 Seeding task attachments...');
+    await taskAttachmentsSeeder.seed(knex);
+    console.log('✅ Task attachments seeded successfully\n');
+
+    console.log('👥 Seeding task members...');
+    await taskMembersSeeder.seed(knex);
+    console.log('✅ Task members seeded successfully\n');
+
     console.log('🎉 Semua seeder berhasil dijalankan!');
     console.log('\n📝 Data yang tersedia:');
     console.log('   • 6 Users (admin, project_manager, developer, user, designer, tester)');
@@ -93,6 +113,10 @@ async function runAllSeeders() {
     console.log('   • System settings untuk konfigurasi aplikasi');
     console.log('   • User settings untuk setiap user (theme, language, preferences)');
     console.log('   • 30+ File uploads (avatars, task attachments, project files)');
+    console.log('   • Task details untuk setiap task (description, requirements, acceptance criteria)');
+    console.log('   • 100+ Task chat messages dengan reply dan attachments');
+    console.log('   • 50+ Task attachments (images, documents, videos, audio)');
+    console.log('   • Task members dengan berbagai role dan permissions');
     
     console.log('\n🔑 Akun untuk testing:');
     console.log('   • Admin: admin@tracker.com / password123');

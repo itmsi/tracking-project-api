@@ -5,7 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 // Configure multer for memory storage
 const storage = multer.memoryStorage();
 
-// File filter function
+// File filter function for general uploads
 const fileFilter = (req, file, cb) => {
   // Allow specific file types for PowerBI reports
   const allowedTypes = [
@@ -18,11 +18,31 @@ const fileFilter = (req, file, cb) => {
     'text/xml', // .xml
     'application/zip', // .zip
     'application/x-zip-compressed', // .zip
-    'application/octet-stream' // .pbix and other binary files
+    'application/octet-stream', // .pbix and other binary files
+    // Add image types for task attachments
+    'image/jpeg',
+    'image/jpg', 
+    'image/png',
+    'image/gif',
+    'image/webp',
+    // Add document types
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain',
+    // Add video types
+    'video/mp4',
+    'video/avi',
+    'video/mov',
+    'video/wmv',
+    // Add audio types
+    'audio/mpeg',
+    'audio/wav',
+    'audio/mp3'
   ];
 
   // Check file extension as fallback
-  const allowedExtensions = ['.xls', '.xlsx', '.pdf', '.csv', '.json', '.xml', '.zip', '.pbix'];
+  const allowedExtensions = ['.xls', '.xlsx', '.pdf', '.csv', '.json', '.xml', '.zip', '.pbix', 
+    '.jpg', '.jpeg', '.png', '.gif', '.webp', '.doc', '.docx', '.txt', '.mp4', '.avi', '.mov', '.wmv', '.mp3', '.wav'];
   const fileExtension = path.extname(file.originalname).toLowerCase();
 
   if (allowedTypes.includes(file.mimetype) || allowedExtensions.includes(fileExtension)) {
@@ -109,8 +129,45 @@ const getContentType = (filename) => {
   return contentTypes[extension] || 'application/octet-stream';
 };
 
+// Upload middleware factory function
+const uploadMiddleware = (folder = 'uploads') => {
+  return (req, res, next) => {
+    uploadSingleFile(req, res, (err) => {
+      if (err instanceof multer.MulterError) {
+        if (err.code === 'LIMIT_FILE_SIZE') {
+          return res.status(400).json({
+            success: false,
+            message: 'File too large. Maximum size is 50MB.',
+            error: err.message
+          });
+        }
+        if (err.code === 'LIMIT_FILE_COUNT') {
+          return res.status(400).json({
+            success: false,
+            message: 'Too many files. Only one file is allowed.',
+            error: err.message
+          });
+        }
+        return res.status(400).json({
+          success: false,
+          message: 'File upload error',
+          error: err.message
+        });
+      } else if (err) {
+        return res.status(400).json({
+          success: false,
+          message: 'File validation error',
+          error: err.message
+        });
+      }
+      next();
+    });
+  };
+};
+
 module.exports = {
   handleFileUpload,
   generateFileName,
-  getContentType
+  getContentType,
+  uploadMiddleware
 };
