@@ -5,6 +5,7 @@ const taskAttachmentsRepository = require('./task_attachments_repository')
 const taskMembersRepository = require('./task_members_repository')
 const taskRepository = require('./postgre_repository')
 const { createActivityLog } = require('../../utils/activity_logger')
+const { createChatNotifications, createReplyNotification } = require('../../utils/chat_notification')
 
 class TaskViewHandler {
   // Get complete task view with all details
@@ -210,6 +211,35 @@ class TaskViewHandler {
         new_values: chatMessage,
         description: `Chat message dikirim di task "${id}"`
       })
+
+      // Create notifications for task members (without WebSocket broadcast since this is HTTP)
+      try {
+        await createChatNotifications({
+          taskId: id,
+          senderId: userId,
+          messageId: chatMessage.id,
+          message: messageData.message,
+          senderInfo: req.user,
+          websocketBroadcast: null // No WebSocket in HTTP handler
+        });
+
+        // If it's a reply, create reply notification
+        if (messageData.reply_to) {
+          await createReplyNotification({
+            taskId: id,
+            senderId: userId,
+            messageId: chatMessage.id,
+            replyToMessageId: messageData.reply_to,
+            message: messageData.message,
+            websocketBroadcast: null
+          });
+        }
+
+        console.log(`🔔 Notifications created for chat message via HTTP`);
+      } catch (notifError) {
+        console.error('⚠️  Failed to create notifications:', notifError.message);
+        // Don't fail the whole operation if notifications fail
+      }
 
       return response.success(res, 201, 'Chat message berhasil dikirim', chatMessage)
     } catch (error) {

@@ -3,6 +3,10 @@ const jwt = require('jsonwebtoken');
 const taskChatRepository = require('./task_chat_repository');
 const taskMembersRepository = require('./task_members_repository');
 const { createActivityLog } = require('../../utils/activity_logger');
+const { 
+  createChatNotifications, 
+  createReplyNotification 
+} = require('../../utils/chat_notification');
 
 class TaskChatSocket {
   constructor(server) {
@@ -80,6 +84,10 @@ class TaskChatSocket {
     this.io.on('connection', (socket) => {
       console.log(`🔗 User ${socket.userId} connected to WebSocket`);
       console.log(`📊 Socket ID: ${socket.id}`);
+
+      // Join user-specific room for personal notifications
+      socket.join(`user_${socket.userId}`);
+      console.log(`👤 User ${socket.userId} joined personal notification room`);
 
       // Join task room
       socket.on('join_task', async (taskId) => {
@@ -180,6 +188,40 @@ class TaskChatSocket {
             new_values: chatMessage,
             description: `Chat message sent in task "${taskId}"`
           });
+
+          // Create notifications for task members
+          try {
+            const websocketBroadcastFn = (userId, notification) => {
+              this.broadcastUserNotification(userId, notification);
+            };
+
+            // Create chat notifications for all members (except sender)
+            await createChatNotifications({
+              taskId,
+              senderId: socket.userId,
+              messageId: chatMessage.id,
+              message,
+              senderInfo: socket.user,
+              websocketBroadcast: websocketBroadcastFn
+            });
+
+            // If it's a reply, create reply notification
+            if (replyTo) {
+              await createReplyNotification({
+                taskId,
+                senderId: socket.userId,
+                messageId: chatMessage.id,
+                replyToMessageId: replyTo,
+                message,
+                websocketBroadcast: websocketBroadcastFn
+              });
+            }
+
+            console.log(`🔔 Notifications created for new message in task ${taskId}`);
+          } catch (notifError) {
+            console.error('⚠️  Failed to create notifications:', notifError.message);
+            // Don't fail the whole operation if notifications fail
+          }
 
           console.log(`✅ Message sent in task ${taskId} by user ${socket.userId}`);
         } catch (error) {
@@ -319,6 +361,12 @@ class TaskChatSocket {
   broadcastTaskNotification(taskId, notification) {
     console.log(`📢 Broadcasting notification to task ${taskId}:`, notification);
     this.io.to(`task_${taskId}`).emit('task_notification', notification);
+  }
+
+  // Method untuk broadcast notification ke user tertentu (via user-specific room)
+  broadcastUserNotification(userId, notification) {
+    console.log(`🔔 Broadcasting notification to user ${userId}:`, notification);
+    this.io.to(`user_${userId}`).emit('notification', notification);
   }
 
   // Method untuk broadcast task updates
