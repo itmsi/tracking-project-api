@@ -71,12 +71,15 @@ class NotificationHandler {
 
   async getUnreadCount(req, res, next) {
     try {
+      console.log('🔔 getUnreadCount called, userId:', req.user?.id);
       const userId = req.user.id
 
       const count = await notificationRepository.getUnreadCount(userId)
+      console.log('🔔 Unread count result:', count);
 
       return response.success(res, 200, 'Jumlah notifikasi belum dibaca', { unread_count: count })
     } catch (error) {
+      console.error('❌ Error in getUnreadCount:', error);
       next(error)
     }
   }

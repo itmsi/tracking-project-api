@@ -46,7 +46,7 @@ const corsOptions = {
     // Get allowed origins from environment variables
     const allowedOrigins = process.env.CORS_ORIGINS ? 
       process.env.CORS_ORIGINS.split(',').map(origin => origin.trim()) : 
-      ['http://localhost:3000', 'http://localhost:9554'];
+      ['http://localhost:3000', 'http://localhost:9554', 'http://localhost:3001'];
     
     if (allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
