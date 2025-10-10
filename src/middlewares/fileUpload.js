@@ -1,9 +1,50 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
-// Configure multer for memory storage
-const storage = multer.memoryStorage();
+// Configure multer for disk storage
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    try {
+      // Default folder or use custom folder from route
+      const folder = req.uploadFolder || 'uploads/temp';
+      const uploadDir = path.join(process.cwd(), folder);
+      
+      console.log(`📂 Creating upload directory: ${uploadDir}`);
+      
+      // Create directory if it doesn't exist
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+        console.log(`✅ Directory created: ${uploadDir}`);
+      }
+      
+      cb(null, uploadDir);
+    } catch (error) {
+      console.error('❌ Error creating upload directory:', error);
+      cb(error);
+    }
+  },
+  filename: function (req, file, cb) {
+    try {
+      console.log(`📝 Generating filename for: ${file.originalname}`);
+      const timestamp = Date.now();
+      const uuid = uuidv4();
+      const extension = path.extname(file.originalname);
+      const baseName = path.basename(file.originalname, extension);
+      
+      // Sanitize filename
+      const sanitizedName = baseName.replace(/[^a-zA-Z0-9-_]/g, '_');
+      const uniqueFileName = `${timestamp}_${uuid}_${sanitizedName}${extension}`;
+      
+      console.log(`✅ Generated filename: ${uniqueFileName}`);
+      cb(null, uniqueFileName);
+    } catch (error) {
+      console.error('❌ Error generating filename:', error);
+      cb(error);
+    }
+  }
+});
 
 // File filter function for general uploads
 const fileFilter = (req, file, cb) => {
@@ -132,8 +173,15 @@ const getContentType = (filename) => {
 // Upload middleware factory function
 const uploadMiddleware = (folder = 'uploads') => {
   return (req, res, next) => {
+    console.log(`🔄 Upload middleware started for folder: ${folder}`);
+    
+    // Set custom folder for this upload
+    req.uploadFolder = `uploads/${folder}`;
+    
     uploadSingleFile(req, res, (err) => {
       if (err instanceof multer.MulterError) {
+        console.error('❌ Multer error:', err.code, err.message);
+        
         if (err.code === 'LIMIT_FILE_SIZE') {
           return res.status(400).json({
             success: false,
@@ -154,12 +202,15 @@ const uploadMiddleware = (folder = 'uploads') => {
           error: err.message
         });
       } else if (err) {
+        console.error('❌ Upload validation error:', err.message);
         return res.status(400).json({
           success: false,
           message: 'File validation error',
           error: err.message
         });
       }
+      
+      console.log('✅ File upload middleware completed');
       next();
     });
   };

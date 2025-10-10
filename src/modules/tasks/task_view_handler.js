@@ -6,6 +6,9 @@ const taskMembersRepository = require('./task_members_repository')
 const taskRepository = require('./postgre_repository')
 const { createActivityLog } = require('../../utils/activity_logger')
 const { createChatNotifications, createReplyNotification } = require('../../utils/chat_notification')
+const { uploadToMinio, isMinioEnabled } = require('../../config/minio')
+const fs = require('fs')
+const path = require('path')
 
 class TaskViewHandler {
   // Get complete task view with all details
@@ -324,25 +327,89 @@ class TaskViewHandler {
   }
 
   async uploadAttachment(req, res, next) {
+    const startTime = Date.now()
+    console.log('🚀 Task attachment upload started at:', new Date().toISOString())
+    
     try {
       const userId = req.user.id
       const { id } = req.params
 
+      console.log('👤 User ID:', userId)
+      console.log('📋 Task ID:', id)
+
+      // Check file uploaded
+      if (!req.file) {
+        console.log('❌ No file in request')
+        return response.error(res, 400, 'File harus diisi')
+      }
+
+      console.log('📦 File received:', {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        filename: req.file.filename,
+        path: req.file.path
+      })
+
+      // Check access permission
+      console.log('🔍 Checking user permission for task')
       const hasAccess = await taskMembersRepository.checkUserPermission(id, userId)
       if (!hasAccess.hasAccess) {
+        console.log('❌ User does not have access to this task')
         return response.error(res, 403, 'Tidak memiliki akses untuk mengupload file di task ini')
       }
 
       // Check if user has upload permission
       if (hasAccess.permissions && !hasAccess.permissions.can_upload) {
+        console.log('❌ User does not have upload permission')
         return response.error(res, 403, 'Tidak memiliki izin untuk mengupload file')
+      }
+
+      console.log('✅ Permission check passed')
+
+      let fileUrl = req.file.path; // Default to local path
+      let shouldDeleteLocalFile = false;
+
+      // Upload to MinIO if enabled
+      if (isMinioEnabled) {
+        try {
+          console.log('☁️  Uploading file to MinIO...')
+          
+          // Read file buffer
+          const fileBuffer = fs.readFileSync(req.file.path);
+          
+          // Generate object name (path in MinIO)
+          const objectName = `task_attachments/${id}/${req.file.filename}`;
+          
+          // Upload to MinIO
+          const uploadResult = await uploadToMinio(
+            objectName,
+            fileBuffer,
+            req.file.mimetype
+          );
+
+          if (uploadResult.success) {
+            fileUrl = uploadResult.url;
+            shouldDeleteLocalFile = true; // Delete local file after successful upload
+            console.log('✅ File uploaded to MinIO:', fileUrl);
+          } else {
+            console.warn('⚠️  MinIO upload failed, using local path:', uploadResult.error);
+            fileUrl = req.file.path; // Fallback to local path
+          }
+        } catch (minioError) {
+          console.error('❌ Error uploading to MinIO:', minioError.message);
+          console.log('⚠️  Falling back to local storage');
+          fileUrl = req.file.path; // Fallback to local path
+        }
+      } else {
+        console.log('ℹ️  MinIO disabled, using local storage');
       }
 
       // File upload will be handled by middleware
       const attachmentData = {
         file_name: req.file.filename,
         original_name: req.file.originalname,
-        file_path: req.file.path,
+        file_path: fileUrl, // Use MinIO URL or local path
         file_size: req.file.size,
         mime_type: req.file.mimetype,
         file_type: req.body.file_type || 'document',
@@ -350,9 +417,29 @@ class TaskViewHandler {
         is_public: req.body.is_public !== undefined ? req.body.is_public === 'true' : true
       }
 
+      console.log('💾 Saving attachment to database:', {
+        file_name: attachmentData.file_name,
+        file_type: attachmentData.file_type,
+        size: attachmentData.file_size,
+        storage: isMinioEnabled ? 'MinIO' : 'Local',
+        url: fileUrl
+      })
+
       const attachment = await taskAttachmentsRepository.createAttachment(id, attachmentData, userId)
+      console.log('✅ Attachment saved with ID:', attachment.id)
+
+      // Delete local file if uploaded to MinIO successfully
+      if (shouldDeleteLocalFile && fs.existsSync(req.file.path)) {
+        try {
+          fs.unlinkSync(req.file.path);
+          console.log('🗑️  Local file deleted after MinIO upload');
+        } catch (deleteError) {
+          console.warn('⚠️  Could not delete local file:', deleteError.message);
+        }
+      }
 
       // Create activity log
+      console.log('📝 Creating activity log')
       await createActivityLog({
         user_id: userId,
         action: 'created',
@@ -361,9 +448,31 @@ class TaskViewHandler {
         new_values: attachment,
         description: `File "${attachment.original_name}" diupload ke task "${id}"`
       })
+      console.log('✅ Activity log created')
+
+      const duration = Date.now() - startTime
+      console.log(`✅ Task attachment upload completed in ${duration}ms`)
 
       return response.success(res, 201, 'File berhasil diupload', attachment)
     } catch (error) {
+      const duration = Date.now() - startTime
+      console.error(`❌ Task attachment upload failed after ${duration}ms:`, error.message)
+      console.error('Error stack:', error.stack)
+      
+      // Clean up uploaded file if exists
+      if (req.file && req.file.path) {
+        const fs = require('fs')
+        if (fs.existsSync(req.file.path)) {
+          console.log('🗑️ Cleaning up file:', req.file.path)
+          try {
+            fs.unlinkSync(req.file.path)
+            console.log('✅ File cleaned up')
+          } catch (cleanupError) {
+            console.error('❌ Error cleaning up file:', cleanupError.message)
+          }
+        }
+      }
+      
       next(error)
     }
   }

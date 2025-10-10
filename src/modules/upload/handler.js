@@ -1,6 +1,7 @@
 const { response } = require('../../utils')
 const uploadRepository = require('./postgre_repository')
 const { createActivityLog } = require('../../utils/activity_logger')
+const { uploadToMinio, isMinioEnabled } = require('../../config/minio')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
@@ -157,28 +158,90 @@ class UploadHandler {
         console.log('✅ Project access validated')
       }
 
-      // Move file from temp to permanent location
-      const permanentDir = path.join(process.cwd(), 'uploads', type)
-      console.log('📂 Creating permanent directory:', permanentDir)
-      
-      if (!fs.existsSync(permanentDir)) {
-        fs.mkdirSync(permanentDir, { recursive: true })
-        console.log('✅ Permanent directory created')
+      let fileUrl = req.file.path; // Default to temp path
+      let shouldDeleteLocalFile = false;
+
+      // Upload to MinIO if enabled
+      if (isMinioEnabled) {
+        try {
+          console.log('☁️  Uploading file to MinIO...')
+          
+          // Read file buffer
+          const fileBuffer = fs.readFileSync(req.file.path);
+          
+          // Generate object name (path in MinIO)
+          const objectName = `${type}/${req.file.filename}`;
+          
+          // Upload to MinIO
+          const uploadResult = await uploadToMinio(
+            objectName,
+            fileBuffer,
+            req.file.mimetype
+          );
+
+          if (uploadResult.success) {
+            fileUrl = uploadResult.url;
+            shouldDeleteLocalFile = true; // Delete local file after successful upload
+            console.log('✅ File uploaded to MinIO:', fileUrl);
+          } else {
+            console.warn('⚠️  MinIO upload failed, using local path:', uploadResult.error);
+            // Fallback to local storage
+            const permanentDir = path.join(process.cwd(), 'uploads', type)
+            if (!fs.existsSync(permanentDir)) {
+              fs.mkdirSync(permanentDir, { recursive: true })
+            }
+            const permanentPath = path.join(permanentDir, req.file.filename)
+            fs.renameSync(req.file.path, permanentPath)
+            fileUrl = permanentPath;
+          }
+        } catch (minioError) {
+          console.error('❌ Error uploading to MinIO:', minioError.message);
+          console.log('⚠️  Falling back to local storage');
+          // Fallback to local storage
+          const permanentDir = path.join(process.cwd(), 'uploads', type)
+          if (!fs.existsSync(permanentDir)) {
+            fs.mkdirSync(permanentDir, { recursive: true })
+          }
+          const permanentPath = path.join(permanentDir, req.file.filename)
+          fs.renameSync(req.file.path, permanentPath)
+          fileUrl = permanentPath;
+        }
+      } else {
+        console.log('ℹ️  MinIO disabled, using local storage');
+        // Move file from temp to permanent location
+        const permanentDir = path.join(process.cwd(), 'uploads', type)
+        console.log('📂 Creating permanent directory:', permanentDir)
+        
+        if (!fs.existsSync(permanentDir)) {
+          fs.mkdirSync(permanentDir, { recursive: true })
+          console.log('✅ Permanent directory created')
+        }
+
+        const permanentPath = path.join(permanentDir, req.file.filename)
+        console.log('📁 Moving file from:', req.file.path)
+        console.log('📁 Moving file to:', permanentPath)
+        
+        fs.renameSync(req.file.path, permanentPath)
+        console.log('✅ File moved successfully')
+        fileUrl = permanentPath;
       }
 
-      const permanentPath = path.join(permanentDir, req.file.filename)
-      console.log('📁 Moving file from:', req.file.path)
-      console.log('📁 Moving file to:', permanentPath)
-      
-      fs.renameSync(req.file.path, permanentPath)
-      console.log('✅ File moved successfully')
+      // Delete temp file if uploaded to MinIO successfully
+      if (shouldDeleteLocalFile && fs.existsSync(req.file.path)) {
+        try {
+          fs.unlinkSync(req.file.path);
+          console.log('🗑️  Local temp file deleted after MinIO upload');
+        } catch (deleteError) {
+          console.warn('⚠️  Could not delete temp file:', deleteError.message);
+        }
+      }
 
       // Save file record to database
       const fileData = {
         user_id: userId,
         original_name: req.file.originalname,
         file_name: req.file.filename,
-        file_path: path.join(type, req.file.filename),
+        file_path: fileUrl, // Use MinIO URL or local path
         file_size: req.file.size,
         mime_type: req.file.mimetype,
         type,
@@ -187,7 +250,10 @@ class UploadHandler {
         project_id: project_id || null
       }
 
-      console.log('💾 Saving file record to database:', fileData)
+      console.log('💾 Saving file record to database:', {
+        ...fileData,
+        storage: isMinioEnabled ? 'MinIO' : 'Local'
+      })
       const file = await uploadRepository.createFileRecord(fileData)
       console.log('✅ File record saved with ID:', file.id)
 
