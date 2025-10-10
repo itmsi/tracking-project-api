@@ -8,18 +8,33 @@ const fs = require('fs')
 // Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadDir = path.join(process.cwd(), 'uploads', 'temp')
-    
-    // Create directory if it doesn't exist
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true })
+    try {
+      const uploadDir = path.join(process.cwd(), 'uploads', 'temp')
+      
+      console.log(`📂 Creating upload directory: ${uploadDir}`)
+      
+      // Create directory if it doesn't exist
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true })
+        console.log(`✅ Directory created: ${uploadDir}`)
+      }
+      
+      cb(null, uploadDir)
+    } catch (error) {
+      console.error('❌ Error creating upload directory:', error)
+      cb(error)
     }
-    
-    cb(null, uploadDir)
   },
   filename: function (req, file, cb) {
-    const uniqueFileName = uploadRepository.generateUniqueFileName(file.originalname, req.user.id)
-    cb(null, uniqueFileName)
+    try {
+      console.log(`📝 Generating filename for: ${file.originalname}`)
+      const uniqueFileName = uploadRepository.generateUniqueFileName(file.originalname, req.user.id)
+      console.log(`✅ Generated filename: ${uniqueFileName}`)
+      cb(null, uniqueFileName)
+    } catch (error) {
+      console.error('❌ Error generating filename:', error)
+      cb(error)
+    }
   }
 })
 
@@ -54,47 +69,109 @@ const upload = multer({
 })
 
 class UploadHandler {
-  // Middleware for file upload
+  // Middleware for file upload with error handling
   uploadMiddleware() {
-    return upload.single('file')
+    return (req, res, next) => {
+      console.log('🔄 Starting file upload middleware')
+      
+      const uploadHandler = upload.single('file')
+      
+      uploadHandler(req, res, (err) => {
+        if (err instanceof multer.MulterError) {
+          console.error('❌ Multer error:', err.code, err.message)
+          
+          // Handle specific multer errors
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            return response.error(res, 400, 'File terlalu besar. Maksimal 10MB')
+          }
+          if (err.code === 'LIMIT_FILE_COUNT') {
+            return response.error(res, 400, 'Terlalu banyak file. Maksimal 5 file')
+          }
+          if (err.code === 'LIMIT_UNEXPECTED_FILE') {
+            return response.error(res, 400, 'Field file tidak sesuai. Gunakan field "file"')
+          }
+          
+          return response.error(res, 400, `Upload error: ${err.message}`)
+        } else if (err) {
+          console.error('❌ Upload error:', err.message)
+          return response.error(res, 400, `Upload error: ${err.message}`)
+        }
+        
+        console.log('✅ File upload middleware completed')
+        next()
+      })
+    }
   }
 
   async uploadFile(req, res, next) {
+    const startTime = Date.now()
+    console.log('🚀 Upload started at:', new Date().toISOString())
+    
     try {
       const userId = req.user.id
       const { type, description, task_id, project_id } = req.body
 
+      console.log('👤 User ID:', userId)
+      console.log('📋 Upload type:', type)
+      console.log('📄 Body:', { type, description, task_id, project_id })
+
       if (!req.file) {
+        console.log('❌ No file in request')
         return response.error(res, 400, 'File harus diisi')
       }
 
-      // Validate file access based on type
+      console.log('📦 File received:', {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        filename: req.file.filename,
+        path: req.file.path
+      })
+
+      // Validate file access based on type (skip for avatar and general)
       if (type === 'task_attachment' && task_id) {
+        console.log('🔍 Validating task access for task_id:', task_id)
         const hasAccess = await uploadRepository.validateFileAccess(null, userId, 'task_attachment')
         if (!hasAccess) {
+          console.log('❌ Access denied to task')
           // Delete uploaded file
-          fs.unlinkSync(req.file.path)
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path)
+          }
           return response.error(res, 403, 'Tidak memiliki akses ke task ini')
         }
+        console.log('✅ Task access validated')
       }
 
       if (type === 'project_file' && project_id) {
+        console.log('🔍 Validating project access for project_id:', project_id)
         const hasAccess = await uploadRepository.validateFileAccess(null, userId, 'project_file')
         if (!hasAccess) {
+          console.log('❌ Access denied to project')
           // Delete uploaded file
-          fs.unlinkSync(req.file.path)
+          if (fs.existsSync(req.file.path)) {
+            fs.unlinkSync(req.file.path)
+          }
           return response.error(res, 403, 'Tidak memiliki akses ke project ini')
         }
+        console.log('✅ Project access validated')
       }
 
       // Move file from temp to permanent location
       const permanentDir = path.join(process.cwd(), 'uploads', type)
+      console.log('📂 Creating permanent directory:', permanentDir)
+      
       if (!fs.existsSync(permanentDir)) {
         fs.mkdirSync(permanentDir, { recursive: true })
+        console.log('✅ Permanent directory created')
       }
 
       const permanentPath = path.join(permanentDir, req.file.filename)
+      console.log('📁 Moving file from:', req.file.path)
+      console.log('📁 Moving file to:', permanentPath)
+      
       fs.renameSync(req.file.path, permanentPath)
+      console.log('✅ File moved successfully')
 
       // Save file record to database
       const fileData = {
@@ -106,13 +183,16 @@ class UploadHandler {
         mime_type: req.file.mimetype,
         type,
         description,
-        task_id,
-        project_id
+        task_id: task_id || null,
+        project_id: project_id || null
       }
 
+      console.log('💾 Saving file record to database:', fileData)
       const file = await uploadRepository.createFileRecord(fileData)
+      console.log('✅ File record saved with ID:', file.id)
 
       // Create activity log
+      console.log('📝 Creating activity log')
       await createActivityLog({
         user_id: userId,
         action: 'created',
@@ -121,13 +201,28 @@ class UploadHandler {
         new_values: file,
         description: `File "${file.original_name}" diupload`
       })
+      console.log('✅ Activity log created')
+
+      const duration = Date.now() - startTime
+      console.log(`✅ Upload completed in ${duration}ms`)
 
       return response.success(res, 201, 'File berhasil diupload', file)
     } catch (error) {
+      const duration = Date.now() - startTime
+      console.error(`❌ Upload failed after ${duration}ms:`, error.message)
+      console.error('Error stack:', error.stack)
+      
       // Clean up uploaded file if exists
       if (req.file && fs.existsSync(req.file.path)) {
-        fs.unlinkSync(req.file.path)
+        console.log('🗑️ Cleaning up temp file:', req.file.path)
+        try {
+          fs.unlinkSync(req.file.path)
+          console.log('✅ Temp file cleaned up')
+        } catch (cleanupError) {
+          console.error('❌ Error cleaning up temp file:', cleanupError.message)
+        }
       }
+      
       next(error)
     }
   }

@@ -92,7 +92,7 @@ class UploadRepository {
     return result > 0
   }
 
-  async generateUniqueFileName(originalName, userId) {
+  generateUniqueFileName(originalName, userId) {
     const timestamp = Date.now()
     const randomString = crypto.randomBytes(8).toString('hex')
     const extension = path.extname(originalName)
